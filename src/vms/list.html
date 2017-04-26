@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HICAMP CMS</title>
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+  <script src="./assets/js/jquery-2.2.0.min.js"></script>
+  <script src="./assets/js/bootstrap.min.js"></script>
+  <script src="./assets/js/template-web.js"></script>
+</head>
+
+<style>
+  ul.pagination {
+    cursor: pointer;
+  }
+
+  #container {
+    height: 100%;
+    margin-top: 60px;
+  }
+
+  .nav-tabs a {
+    font-size: 18px;
+  }
+
+  .titles {
+    height: 30px;
+    width: 100%;
+    border-bottom: 2px solid silver;
+  }
+
+  .titles ul {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+    font-weight: 700;
+  }
+
+  .titles ul li {
+    flex: 1;
+  }
+
+  /*列表展示区*/
+  .content {
+    height: 500px;
+    width: 100%;
+    overflow: auto;
+  }
+
+  .content ul {
+    width: 100%;
+    height: 88px;
+    box-sizing: border-box;
+    border-bottom: 1px dotted #000;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    margin-top: 10px;
+    list-style: none;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .content li {
+    width: 25%;
+  }
+
+  .content li:last-child {
+    padding-top: 25px;
+  }
+
+  .content li:nth-child(3) {
+    padding-top: 20px;
+  }
+
+  .content button {
+    margin-right: 10px;
+  }
+
+  .content img {
+    height: 90%;
+  }
+
+  /*分页*/
+  .page {
+    height: 30px;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%);
+  }
+
+</style>
+
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <!--<a class="navbar-brand" href="./add.html">添加</a>-->
+      <!--<a class="navbar-brand" href="#">已添加列表</a>-->
+      <ul class="nav nav-tabs">
+        <li role="presentation"><a href="./add.html">添加</a></li>
+        <li role="presentation" class="active"><a href="#">已添加</a></li>
+      </ul>
+    </div>
+    <a class="navbar-brand navbar-right" href="./index.html">注销</a>
+  </div>
+</nav>
+
+<div class="container" id='container'>
+  <div class="titles">
+    <ul>
+      <li>海报</li>
+      <li>资源信息</li>
+      <li>操作</li>
+      <li>状态</li>
+    </ul>
+  </div>
+  <div class="content">
+    <!--<ul>-->
+    <!--<li><img src="http://localhost:8080/vms/static/large_chaoneng.jpg" alt="嗨学营"></li>-->
+    <!--<li>-->
+    <!--<div>-->
+    <!--资源名称：大冒险-->
+    <!--</div>-->
+    <!--<div>-->
+    <!--资源Id：124124-->
+    <!--</div>-->
+    <!--<div>-->
+    <!--创建时间：2017年4月26日-->
+    <!--</div>-->
+    <!--<div>-->
+    <!--更新时间：2017年4月26日-->
+    <!--</div>-->
+
+    <!--</li>-->
+    <!--<li>-->
+    <!--<button type="button" class="btn btn-primary">上线</button>-->
+    <!--<button type="button" class="btn btn-warning">下线</button>-->
+    <!--<button type="button" class="btn btn-success">详情</button>-->
+    <!--<button type="button" class="btn btn-danger">删除</button>-->
+
+    <!--</li>-->
+    <!--<li>-->
+    <!--<label>已上线</label>-->
+    <!--</li>-->
+    <!--</ul>-->
+  </div>
+  <div class="page">
+    <button type="button" class="btn btn-default pre">上一页</button>
+    &nbsp;<span class='currentPage'></span>&nbsp;&nbsp;<span class="totalPage"></span>&nbsp;
+    <button type="button" class="btn btn-default next">下一页</button>
+  </div>
+
+</div>
+
+</body>
+<script id='content-tpl' type='text/html'>
+  {{each data value index}}
+  <ul>
+    <li><img src={{value.posterLarge}} alt="嗨学营"></li>
+    <li>
+      <div>
+        资源名称：{{value.name}}
+      </div>
+      <div>
+        资源Id：{{value.id}}
+      </div>
+      <div>
+        创建时间：{{value.createdTime | $moment}}
+      </div>
+      <div>
+        更新时间：{{value.updateTime | $moment}}
+      </div>
+
+    </li>
+    <li contentcode={{value.id}}>
+      <button type="button" class="btn btn-primary">上线</button>
+      <button type="button" class="btn btn-warning">下线</button>
+      <button type="button" class="btn btn-success">详情</button>
+      <button type="button" class="btn btn-danger">删除</button>
+    </li>
+    <li>
+      <label>{{value.isOnline?'已上线':'未上线'}}</label>
+    </li>
+  </ul>
+  {{/each}}
+</script>
+<script>
+  $(function () {
+    //添加一个时间格式化过滤器
+    template.defaults.imports.$moment = function (value) {
+      function add0(m) {
+        return m < 10 ? '0' + m : m
+      }
+
+      var time = new Date(value);
+      var y = time.getFullYear();
+      var m = time.getMonth() + 1;
+      var d = time.getDate();
+      var h = time.getHours();
+      var mm = time.getMinutes();
+      var s = time.getSeconds();
+      return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s)
+    }
+    //初始化变量
+    var start = 0
+    var limit = 10
+    var curPage = 1
+    var totalPage = 1
+    renderList(start)
+    //渲染列表
+    function renderList(start) {
+      $.get('/vms/getList?start=' + start + '&limit=' + limit, function (res) {
+        if (res.code == 200) {
+          var html = template('content-tpl', res)
+          $('.content').html(html)
+          $('.currentPage').text('第 ' + curPage + ' 页')
+          totalPage = res.totalPage ? res.totalPage : 1
+          $('.totalPage').text('共 ' + totalPage + ' 页')
+        } else {
+          alert('获取数据失败')
+        }
+      })
+    }
+
+    function prePage() {
+      if (curPage == 1) {
+        return
+      } else {
+        curPage--
+        start = (curPage - 1) * limit
+        renderList(start)
+      }
+
+    }
+
+    function nextPage() {
+      if (curPage == totalPage) {
+        return
+      } else {
+        curPage++
+        start = (curPage - 1) * limit
+        renderList(start)
+      }
+    }
+
+
+    $('.page').on('click', '.pre', prePage)
+    $('.page').on('click', '.next', nextPage)
+
+  })
+
+
+</script>
+</html>
