@@ -7,7 +7,7 @@ module.exports = {
   port: 8080,
   dbbase: 'mongodb://localhost:27017/vms',
   //剧集同步接口
-  pushServer: 'http://101.200.84.44:8030',
+  pushServer: 'http://localhost:8030/api/backend/vms/bundle',
   //upload files path
   resourcePath: path.join(__dirname, '../../resource/'),
   staicRoute: '/static',

@@ -198,13 +198,20 @@
       </div>
 
     </li>
-    <li contentcode={{value.id}}>
-      <button type="button" class="btn btn-primary">上线</button>
-      <button type="button" class="btn btn-warning">下线</button>
+    <li contentcode={{value.id}} class="btns">
+      {{if value.isOnline}}
+      <button type="button" class="btn btn-primary onLine" disabled>上线</button>
+      <button type="button" class="btn btn-warning offLine">下线</button>
+      {{/if}}
+      {{if !value.isOnline}}
+      <button type="button" class="btn btn-primary onLine">上线</button>
+      <button type="button" class="btn btn-warning offLine" disabled>下线</button>
+      {{/if}}
+
       <button type="button" class="btn btn-success">详情</button>
       <button type="button" class="btn btn-danger">删除</button>
     </li>
-    <li>
+    <li class='status'>
       <label>{{value.isOnline?'已上线':'未上线'}}</label>
     </li>
   </ul>
@@ -242,8 +249,37 @@
           $('.currentPage').text('第 ' + curPage + ' 页')
           totalPage = res.totalPage ? res.totalPage : 1
           $('.totalPage').text('共 ' + totalPage + ' 页')
+
+          //绑定事件
+          $('.btns').on('click', '.onLine', pushToLine)
         } else {
           alert('获取数据失败')
+        }
+      })
+    }
+
+//controll 上线 1  下线 0
+    function pushToLine() {
+      var me = this
+      var id = $(this).parent().attr('contentcode')
+      $.ajax({
+        type: "POST",
+        url: '/vms/pushToCMS',
+        data: {
+          id: id
+        },
+        success: function (res) {
+          if (res.code == 200) {
+            alert('操作成功')
+            //刷新页面
+            renderList(start)
+          } else {
+            alert('操作失败')
+          }
+
+        },
+        fail: function () {
+          alert('操作失败')
         }
       })
     }
@@ -269,12 +305,10 @@
       }
     }
 
-
     $('.page').on('click', '.pre', prePage)
     $('.page').on('click', '.next', nextPage)
 
   })
-
 
 </script>
 </html>
