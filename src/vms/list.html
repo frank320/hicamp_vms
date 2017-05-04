@@ -244,7 +244,7 @@
       <button type="button" class="btn btn-primary onLine" disabled>上线</button>
       <button type="button" class="btn btn-warning offLine">下线</button>
       <button type="button" class="btn btn-success detail">详情</button>
-      <button type="button" class="btn btn-danger delete disabled">删除</button>
+      <button type="button" class="btn btn-danger delete" disabled>删除</button>
       {{/if}}
       {{if !value.isOnline}}
       <button type="button" class="btn btn-primary onLine">上线</button>
@@ -353,7 +353,7 @@
     function pushToLine() {
       var me = this
       var id = $(this).parent().attr('contentcode')
-      var needOffline = $(this).hasClass('offLine')
+      var needOffline = $(this).hasClass('offLine') ? 1 : 0
       $.ajax({
         type: "POST",
         url: '/vms/pushToCMS',

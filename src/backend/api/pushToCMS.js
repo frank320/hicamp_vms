@@ -9,6 +9,7 @@ const fetch = require('node-fetch')
 router.post('/pushToCMS', (req, res)=> {
   //拿到资源id
   const bid = req.body.id
+  const needOffline = parseInt(req.body.needOffline)
   if (!bid) {
     return res.json({
       code: 400,
@@ -17,7 +18,7 @@ router.post('/pushToCMS', (req, res)=> {
   }
   //默认是上线 //< integer of 0/1/2 > 操作类型：0 添加，1 更新，2 删除 protocaltype
   let protocoltype = 0
-  if (req.body.needOffline) {
+  if (needOffline) {
     //下线
     protocoltype = 2
   }
@@ -59,7 +60,7 @@ router.post('/pushToCMS', (req, res)=> {
         if (r.code === 0) {
           //添加成功 修改数据库里isOnline值
           let isOnline = 1
-          if (req.body.needOffline) {
+          if (needOffline) {
             isOnline = 0
           }
           Album.update({id: bid}, {$set: {isOnline: isOnline}}).exec()
