@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>HICAMP CMS</title>
+  <title>HICAMP VMS</title>
   <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
   <script src="./assets/js/jquery-2.2.0.min.js"></script>
   <script src="./assets/js/bootstrap.min.js"></script>
@@ -114,6 +114,28 @@
     transform: translate(-50%);
   }
 
+  .modal-body span {
+    font-weight: 700;
+  }
+
+  .modal-body div {
+    margin: 6px;
+  }
+
+  .modal-body .posterLarge img {
+    width: 260px;
+    height: 142px;
+    display: block;
+    margin: 4px 56px;
+  }
+
+  .modal-body .posterSmall img {
+    width: 130px;
+    height: 132px;
+    display: block;
+    margin: 4px 56px;
+  }
+
 </style>
 
 <body>
@@ -170,6 +192,25 @@
     <!--</li>-->
     <!--</ul>-->
   </div>
+  <!--详情页弹窗-->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">资源详情</h4>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="page">
     <button type="button" class="btn btn-default pre">上一页</button>
     &nbsp;<span class='currentPage'></span>&nbsp;&nbsp;<span class="totalPage"></span>&nbsp;
@@ -208,7 +249,7 @@
       <button type="button" class="btn btn-warning offLine" disabled>下线</button>
       {{/if}}
 
-      <button type="button" class="btn btn-success">详情</button>
+      <button type="button" class="btn btn-success detail">详情</button>
       <button type="button" class="btn btn-danger">删除</button>
     </li>
     <li class='status'>
@@ -217,6 +258,56 @@
   </ul>
   {{/each}}
 </script>
+<script id='content-modal' type='text/html'>
+  <div>
+    <span>资源名称：</span>{{name}}
+  </div>
+  <div>
+    <span>资源Id：</span>{{id}}
+  </div>
+  <div class='posterLarge'>
+    <span>大海报：</span>{{posterLarge}} <br><img src={{posterLarge}} alt="">
+  </div>
+  <div class='posterSmall'>
+    <span>小海报：</span>{{posterSmall}} <br><img src={{posterSmall}} alt="">
+  </div>
+  <div>
+    <span>版权：</span>{{copyright}}
+  </div>
+  <div>
+    <span>评分：</span>{{score}}
+  </div>
+  <div>
+    <span>是否为专辑：</span>{{isAlbum?'是':'否'}}
+  </div>
+  <div>
+    <span>观看权限：</span>{{vip?'会员':'免费'}}
+  </div>
+  <div>
+    <span>状态：</span>{{isOnline?'已上线':'未上线'}}
+  </div>
+  <div>
+    <span>标签：</span>{{tags.join(', ')}}
+  </div>
+  <div>
+    <span>年龄：</span>{{minAge}}~{{maxAge}}岁
+  </div>
+
+  <div>
+    <span>摘要：</span>{{summary}}
+  </div>
+
+
+  <div>
+    <span>创建时间：</span>{{createdTime | $moment}}
+  </div>
+  <div>
+    <span>更新时间：</span>{{updateTime | $moment}}
+  </div>
+
+
+</script>
+
 <script>
   $(function () {
     //添加一个时间格式化过滤器
@@ -250,15 +341,12 @@
           totalPage = res.totalPage ? res.totalPage : 1
           $('.totalPage').text('共 ' + totalPage + ' 页')
 
-          //绑定事件
-          $('.btns').on('click', '.onLine', pushToLine)
         } else {
           alert('获取数据失败')
         }
       })
     }
 
-//controll 上线 1  下线 0
     function pushToLine() {
       var me = this
       var id = $(this).parent().attr('contentcode')
@@ -305,8 +393,33 @@
       }
     }
 
+    //展示详情页
+    function showDetail() {
+      var id = $(this).parent().attr('contentcode')
+      $.ajax({
+        url: '/vms/getOne',
+        data: {
+          id: id
+        },
+        success: function (res) {
+          if (res.code == 200) {
+            var data = res.data
+            var html = template('content-modal', data)
+            $('.modal-body').html(html)
+          } else {
+            console.log('fail')
+          }
+        }
+      })
+      $('#myModal').modal('show')
+    }
+
+
+    //绑定事件
     $('.page').on('click', '.pre', prePage)
     $('.page').on('click', '.next', nextPage)
+    $('.content').on('click', '.onLine', pushToLine)
+    $('.content').on('click', '.detail', showDetail)
 
   })
 
