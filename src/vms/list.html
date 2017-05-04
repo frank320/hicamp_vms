@@ -243,14 +243,17 @@
       {{if value.isOnline}}
       <button type="button" class="btn btn-primary onLine" disabled>上线</button>
       <button type="button" class="btn btn-warning offLine">下线</button>
+      <button type="button" class="btn btn-success detail">详情</button>
+      <button type="button" class="btn btn-danger delete disabled">删除</button>
       {{/if}}
       {{if !value.isOnline}}
       <button type="button" class="btn btn-primary onLine">上线</button>
       <button type="button" class="btn btn-warning offLine" disabled>下线</button>
+      <button type="button" class="btn btn-success detail">详情</button>
+      <button type="button" class="btn btn-danger delete">删除</button>
       {{/if}}
 
-      <button type="button" class="btn btn-success detail">详情</button>
-      <button type="button" class="btn btn-danger">删除</button>
+
     </li>
     <li class='status'>
       <label>{{value.isOnline?'已上线':'未上线'}}</label>
@@ -350,11 +353,13 @@
     function pushToLine() {
       var me = this
       var id = $(this).parent().attr('contentcode')
+      var needOffline = $(this).hasClass('offLine')
       $.ajax({
         type: "POST",
         url: '/vms/pushToCMS',
         data: {
-          id: id
+          id: id,
+          needOffline: needOffline
         },
         success: function (res) {
           if (res.code == 200) {
@@ -409,17 +414,44 @@
           } else {
             console.log('fail')
           }
+        },
+        fail: function () {
+          console.log('fail')
         }
       })
       $('#myModal').modal('show')
     }
 
+    //删除功能
+    function deleteOne() {
+      var id = $(this).parent().attr('contentcode')
+      $.ajax({
+        url: '/vms/deleteOne',
+        method: 'DELETE',
+        data: {
+          id: id
+        },
+        success: function (res) {
+          if (res.code == 200) {
+            alert('操作成功')
+            window.location.reload()
+          } else {
+            alert('操作失败')
+          }
+        },
+        fail: function () {
+          alert('操作失败')
+        }
+      })
+    }
 
     //绑定事件
     $('.page').on('click', '.pre', prePage)
     $('.page').on('click', '.next', nextPage)
     $('.content').on('click', '.onLine', pushToLine)
+    $('.content').on('click', '.offLine', pushToLine)
     $('.content').on('click', '.detail', showDetail)
+    $('.content').on('click', '.delete', deleteOne)
 
   })
 

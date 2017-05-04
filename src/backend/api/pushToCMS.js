@@ -15,10 +15,16 @@ router.post('/pushToCMS', (req, res)=> {
       msg: '请求参数有误'
     })
   }
+  //默认是上线 //< integer of 0/1/2 > 操作类型：0 添加，1 更新，2 删除 protocaltype
+  let protocoltype = 0
+  if (req.body.needOffline) {
+    //下线
+    protocoltype = 2
+  }
   return Album.findOne({id: bid})
     .then(r=> {
       let pushData = {
-        protocoltype: r.protocaltype,
+        protocoltype: protocoltype,
         copyright: r.copyright,
         id: r.id,
         name: r.name,
@@ -52,7 +58,11 @@ router.post('/pushToCMS', (req, res)=> {
         //{code:0} success
         if (r.code === 0) {
           //添加成功 修改数据库里isOnline值
-          Album.update({id: bid}, {$set: {isOnline: 1}}).exec()
+          let isOnline = 1
+          if (req.body.needOffline) {
+            isOnline = 0
+          }
+          Album.update({id: bid}, {$set: {isOnline: isOnline}}).exec()
           res.json({
             code: 200
           })
