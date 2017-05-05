@@ -1,0 +1,23 @@
+'use strict';
+
+/**
+ * Created by frank on 2017/4/25.
+ */
+var router = require('express').Router();
+
+var config = require('../config');
+
+//用户登录密码验证
+router.post('/login', function (req, res) {
+  if (req.body.account === config.account && req.body.password === config.password) {
+    return res.json({
+      code: 200
+    });
+  } else {
+    return res.json({
+      code: 401
+    });
+  }
+});
+
+module.exports = router;
