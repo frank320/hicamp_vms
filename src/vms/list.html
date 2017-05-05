@@ -46,16 +46,20 @@
     width: 10%;
   }
 
-  .titles li:nth-child(3) {
-    width: 40%;
-  }
-
-  .titles li:nth-child(2) {
+  .titles li:nth-child(4) {
     width: 30%;
   }
 
-  .titles li:nth-child(1) {
+  .titles li:nth-child(3) {
+    width: 30%;
+  }
+
+  .titles li:nth-child(2) {
     width: 20%;
+  }
+
+  .titles li:nth-child(1) {
+    width: 10%;
   }
 
   /*列表展示区*/
@@ -84,17 +88,21 @@
     padding-top: 25px;
   }
 
-  .content li:nth-child(3) {
-    width: 40%;
+  .content li:nth-child(4) {
+    width: 30%;
     padding-top: 20px;
   }
 
-  .content li:nth-child(2) {
+  .content li:nth-child(3) {
     width: 30%;
   }
 
-  .content li:nth-child(1) {
+  .content li:nth-child(2) {
     width: 20%;
+  }
+
+  .content li:nth-child(1) {
+    width: 10%;
   }
 
   .content button {
@@ -156,6 +164,7 @@
 <div class="container" id='container'>
   <div class="titles">
     <ul>
+      <li>序号</li>
       <li>海报</li>
       <li>资源信息</li>
       <li>操作</li>
@@ -223,6 +232,7 @@
 <script id='content-tpl' type='text/html'>
   {{each data value index}}
   <ul>
+    <li><label>{{index | $order}}</label></li>
     <li><img src={{value.posterLarge}} alt="嗨学营"></li>
     <li>
       <div>
@@ -327,6 +337,9 @@
       var mm = time.getMinutes();
       var s = time.getSeconds();
       return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s)
+    }
+    template.defaults.imports.$order = function (value) {
+      return (+value + 1 + (curPage - 1) * 10)
     }
     //初始化变量
     var start = 0
