@@ -1,0 +1,19 @@
+{
+  "name": "hicamp_vms",
+  "script": "index.js",
+  "args": [],
+  "interpreter": "node",
+  "interpreter_args": [],
+  "env": {
+    "NODE_ENV": "production",
+    "HOST": "0.0.0.0",
+    "PORT": "8080",
+    "DB_BASE": "mongodb://127.0.0.1:27017/vms",
+    "PUSH_SERVER": "http://101.200.84.44/api/backend/vms/bundle",
+    "RESOURCE_PATH": "",
+    "STATIC_ROUTE": "/static",
+    "PREFIX": "/vms",
+    "ACCOUNT": "admin",
+    "PASSWORD": "admin"
+  }
+}

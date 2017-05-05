@@ -7,18 +7,26 @@
 //gulp-cssnano 压缩 css
 //gulp-htmlmin 压缩html
 //gult-sass 编译css
-//browser-sync 同步刷新
 
 
 var gulp = require('gulp')
-var browserSync = require('browser-sync')
+var gulpLoadPlugins = require('gulp-load-plugins')
+var plugins = gulpLoadPlugins()
+var runSequence = require('run-sequence')
+var del = require('del')
 
+gulp.task('clean', del.bind(null, ['dist/*']))
+//转码es6代码
+gulp.task('compile', ['clean'], function () {
+  return gulp.src(['src/backend/**/*.js'])
+    .pipe(plugins.babel())
+    .pipe(gulp.dest('dist/backend'))
+})
+//移动其文件
+gulp.task('extrals', ['compile'], function () {
+  return gulp.src('src/vms/**/*.*').pipe(gulp.dest('dist/vms'))
+})
 
-//实时更新
-gulp.task('default', function () {
-  browserSync.init({
-    server: './dist',//服务器打开的目录
-    files: ['./dist/**/*.*'],//需要监视的文件
-    port: 80//自定义的端口号
-  })
+gulp.task('build', ['extrals'], function () {
+  console.log('构建完毕')
 })

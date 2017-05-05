@@ -4,15 +4,16 @@
 const path = require('path')
 
 module.exports = {
-  port: 8080,
-  dbbase: 'mongodb://localhost:27017/vms',
+  port: process.env.PORT || 8080,
+  dbbase: process.env.DB_BASE || 'mongodb://localhost:27017/vms',
   //剧集同步接口
-  pushServer: 'http://localhost:8030/api/backend/vms/bundle',
+  pushServer: process.env.PUSH_SERVER || 'http://localhost:8030/api/backend/vms/bundle',
   //upload files path
-  resourcePath: path.join(__dirname, '../../resource/'),
-  staicRoute: '/static',
-  prefix: '/vms',
+  resourcePath: process.env.RESOURCE_PATH || path.join(__dirname, '../../resource/'),
+  //static resource route
+  staicRoute: process.env.STATIC_ROUTE || '/static',
+  prefix: process.env.PREFIX || '/vms',
   //登录账户设置
-  account: 'admin',
-  password: 'admin'
+  account: process.env.ACCOUNT || 'admin',
+  password: process.env.PASSWORD || 'admin'
 }
