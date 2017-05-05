@@ -62,5 +62,5 @@ app.use(defaultErrorHandler);
 //监听一个端口
 app.listen(config.port, function (err) {
   if (err) throw err;
-  console.log('server is running at port ' + config.port);
+  console.log('server is running at port ' + config.port + ',the runtime is ' + process.env.NODE_ENV);
 });
