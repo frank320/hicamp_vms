@@ -9,6 +9,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser')
 const glob = require('glob')
 const mongoose = require('mongoose')
 
@@ -40,6 +41,30 @@ app.use(config.prefix + config.staicRoute, express.static(config.resourcePath))
 app.use(cors())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json())
+app.use(cookieParser())
+
+//api权限验证
+function auth(req, res, next) {
+  const api = req.path
+  //bypass the authentification handler itself
+  if (api === '/login') {
+    return next()
+  }
+  if (!req.cookies.token) {
+    return res.json({
+      code: 401,
+      msg: 'unauthorized'
+    })
+  } else {
+    //重新设置过期时间
+    res.cookie('token', req.cookies.token, {
+      path: '/vms',
+      maxAge: config.cookieExp * 60 * 60 * 1000
+    })
+    return next()
+  }
+}
+app.use(config.prefix, auth)
 
 //载入路由
 glob.sync('./api/**/*.js', {cwd: __dirname}).forEach(item => {

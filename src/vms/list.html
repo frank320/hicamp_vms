@@ -350,6 +350,11 @@
     //渲染列表
     function renderList(start) {
       $.get('/vms/getList?start=' + start + '&limit=' + limit, function (res) {
+        if (res.code == 401) {
+          alert('获取数据失败,请重新登录')
+          window.location.replace('./index.html')
+          return
+        }
         if (res.code == 200) {
           var html = template('content-tpl', res)
           $('.content').html(html)
@@ -375,6 +380,11 @@
           needOffline: needOffline
         },
         success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
           if (res.code == 200) {
             alert('操作成功')
             //刷新页面
@@ -420,6 +430,11 @@
           id: id
         },
         success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
           if (res.code == 200) {
             var data = res.data
             var html = template('content-modal', data)
@@ -445,6 +460,11 @@
           id: id
         },
         success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
           if (res.code == 200) {
             alert('操作成功')
             window.location.reload()
