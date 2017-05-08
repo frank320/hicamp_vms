@@ -11,6 +11,7 @@ var express = require('express');
 var app = express();
 var cors = require('cors');
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser');
 var glob = require('glob');
 var mongoose = require('mongoose');
 
@@ -40,6 +41,30 @@ app.use(config.prefix + config.staicRoute, express.static(config.resourcePath));
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+
+//api权限验证
+function auth(req, res, next) {
+  var api = req.path;
+  //bypass the authentification handler itself
+  if (api === '/login') {
+    return next();
+  }
+  if (!req.cookies.token) {
+    return res.json({
+      code: 401,
+      msg: 'unauthorized'
+    });
+  } else {
+    //重新设置过期时间
+    res.cookie('token', req.cookies.token, {
+      path: '/vms',
+      maxAge: config.cookieExp * 60 * 60 * 1000
+    });
+    return next();
+  }
+}
+app.use(config.prefix, auth);
 
 //载入路由
 glob.sync('./api/**/*.js', { cwd: __dirname }).forEach(function (item) {

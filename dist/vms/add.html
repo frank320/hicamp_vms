@@ -157,6 +157,11 @@
         alert('添加失败')
       }
       $('button[type="submit"]').prop('disabled', false).text('点击添加')
+
+      if (JSON.parse(this.responseText).code === 401) {
+        alert('请重新登录')
+        window.location.replace('./index.html')
+      }
     }
     xhr.onabort = function () {
       alert('添加失败')
