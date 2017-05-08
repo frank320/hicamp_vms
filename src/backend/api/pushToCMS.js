@@ -37,7 +37,7 @@ router.post('/pushToCMS', (req, res)=> {
         createdTime: r.createdTime,
         updateTime: r.updateTime,
         posterLarge: r.posterLarge,
-        posterSmall: r.posterSmall,
+        posterSmall: r.posterLarge,
         videos: r.videos,
 
         vip: r.vip,
