@@ -57,7 +57,7 @@ function auth(req, res, next) {
     });
   } else {
     //重新设置过期时间
-    res.cookie('token', req.cookies.vms_token, {
+    res.cookie('vms_token', req.cookies.vms_token, {
       path: '/vms',
       maxAge: config.cookieExp * 60 * 60 * 1000
     });
