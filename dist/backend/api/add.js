@@ -95,7 +95,7 @@ router.post('/add', function (req, res) {
         msg: '文件保存出错'
       });
     }
-    var localIp = getLocalIP() ? getLocalIP() : 'localhost';
+    var localIp = getLocalIP() ? getLocalIP() : '192.168.1.101';
 
     function imgUrl(imgName) {
       return 'http://' + localIp + ':' + config.port + config.prefix + config.staicRoute + '/' + imgName;

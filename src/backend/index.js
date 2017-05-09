@@ -50,14 +50,14 @@ function auth(req, res, next) {
   if (api === '/login') {
     return next()
   }
-  if (!req.cookies.token) {
+  if (!req.cookies.vms_token) {
     return res.json({
       code: 401,
       msg: 'unauthorized'
     })
   } else {
     //重新设置过期时间
-    res.cookie('token', req.cookies.token, {
+    res.cookie('token', req.cookies.vms_token, {
       path: '/vms',
       maxAge: config.cookieExp * 60 * 60 * 1000
     })

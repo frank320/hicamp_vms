@@ -15,7 +15,7 @@ router.post('/login', (req, res)=> {
   if (req.body.account === config.account && req.body.password === config.password) {
     const token = generateToken()
     //设置cookie
-    res.cookie('token', token, {
+    res.cookie('vms_token', token, {
       path: '/vms',
       maxAge: config.cookieExp * 60 * 60 * 1000
     })
