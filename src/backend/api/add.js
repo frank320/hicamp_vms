@@ -13,7 +13,9 @@ const Album = require('../model/album')
 //获取本机的ip地址
 function getLocalIP() {
   var ifaces = os.networkInterfaces();
+  var ip = 'localhost'
   for (var dev in ifaces) {
+    //服务器ip
     if (dev.indexOf('eth0') != -1) {
       var tokens = dev.split(':');
       var dev2 = null;
@@ -49,7 +51,26 @@ function getLocalIP() {
         return ip;
       }
     }
+    //局域网ip
+    if (dev == 'WLAN' || dev == '无线网络连接') {
+      ifaces[dev].forEach(function (v) {
+        if (v.family == 'IPv4') {
+          ip = v.address
+        }
+      })
+      return ip
+    }
+    //服务器局域网ip
+    if (dev == '本地连接') {
+      ifaces[dev].forEach(function (v) {
+        if (v.family == 'IPv4') {
+          ip = v.address
+        }
+      })
+      return ip
+    }
   }
+  return ip
 }
 
 
@@ -97,7 +118,7 @@ router.post('/add', function (req, res) {
         msg: '文件保存出错'
       })
     }
-    let localIp = getLocalIP() ? getLocalIP() : '192.168.1.101'
+    let localIp = getLocalIP()
 
     function imgUrl(imgName) {
       return `http://${localIp}:${config.port}${config.prefix}${config.staicRoute}/${imgName}`
