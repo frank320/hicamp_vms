@@ -35,6 +35,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-load-plugins": "^1.5.0",
     "nodemon": "^1.11.0",
+    "pm2": "^2.4.6",
     "run-sequence": "^1.2.2"
   }
 }
