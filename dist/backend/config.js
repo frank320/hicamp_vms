@@ -6,7 +6,7 @@
 var path = require('path');
 
 module.exports = {
-  port: Number(process.env.PORT || 8080),
+  port: Number(process.env.PORT || 8090),
   dbbase: process.env.DB_BASE || 'mongodb://localhost:27017/vms',
   //剧集同步接口
   pushServer: process.env.PUSH_SERVER || 'http://localhost:8030/api/backend/vms/bundle',
