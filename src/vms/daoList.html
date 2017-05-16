@@ -34,6 +34,19 @@
     height: 40px;
   }
 
+  .wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .wrap div:last-child {
+    float: right;
+  }
+
+  .wrap button {
+    margin-top: 5px;
+  }
+
   .selectAll {
     display: inline-block;
     float: left;
@@ -84,8 +97,13 @@
       </tbody>
     </table>
   </div>
-  <div class="checkbox selectAll"><label><input type="checkbox" value="124125125"><b>全选</b></label></div>
-  <button type="button" class="btn btn-primary">一键导出Excel</button>
+  <div class="wrap">
+    <div class="checkbox selectAll"><label><input id='selectAll' type="checkbox" value="全选"><b>全选</b></label></div>
+    <div>
+      <button type="button" class="btn btn-primary daoExcel">一键生成Excel</button>
+    </div>
+    <div><a href="" id='downloadExcel' style='display: none'>下载Excel</a></div>
+  </div>
 </div>
 
 </body>
@@ -120,7 +138,6 @@
       var s = time.getSeconds();
       return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s)
     }
-
     //渲染列表
     renderList()
     function renderList() {
@@ -139,9 +156,52 @@
       })
     }
 
+    function selectAll() {
+      $('#selectAll').prop('checked') ? $('#list input[type="checkbox"]').prop('checked', true) : $('#list input[type="checkbox"]').prop('checked', false)
+    }
+
+    function generateExcel() {
+      //获取选中媒资的id
+      var checkList = []
+      $('#list input[type="checkbox"]:checked').each(function () {
+        if ($(this).val()) checkList.push($(this).val())
+      })
+      if (checkList.length === 0) {
+        alert('请选择需要导出的媒资')
+        return
+      }
+      $('button.daoExcel').prop('disabled', true).text('正在导出...')
+      $.ajax({
+        type: "POST",
+        url: '/vms/generateExcel',
+        data: {
+          checkList: JSON.stringify(checkList)
+        },
+        success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
+          if (res.code == 200) {
+            alert('suuccess')
+            $('button.daoExcel').prop('disabled', false).text('一键生成Excel')
+            $('#downloadExcel').attr('href', res.excelPath)
+            $('#downloadExcel').css('display', 'block')
+          } else {
+            alert('操作失败')
+          }
+
+        },
+        fail: function () {
+          alert('操作失败')
+        }
+      })
+    }
 
     //绑定事件
-//    $('.content').on('click', '.onLine', pushToLine)
+    $('.container').on('click', '.daoExcel', generateExcel)
+    $('.container').on('click', '.selectAll', selectAll)
 
 
   })
