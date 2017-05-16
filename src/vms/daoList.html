@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HICAMP VMS</title>
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+  <script src="./assets/js/jquery-2.2.0.min.js"></script>
+  <script src="./assets/js/bootstrap.min.js"></script>
+  <script src="./assets/js/template-web.js"></script>
+</head>
+
+<style>
+  #container {
+    height: 100%;
+    margin-top: 60px;
+  }
+
+  .nav-tabs a {
+    font-size: 18px;
+  }
+
+  .box {
+    height: 500px;
+    overflow: auto;
+  }
+
+  #list tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+
+  #list tr img {
+    height: 40px;
+  }
+
+  .selectAll {
+    display: inline-block;
+    float: left;
+  }
+
+  .btn {
+    float: right;
+  }
+</style>
+
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <!--<a class="navbar-brand" href="./add.html">添加</a>-->
+      <!--<a class="navbar-brand" href="#">已添加列表</a>-->
+      <ul class="nav nav-tabs">
+        <li role="presentation"><a href="./add.html">添加</a></li>
+        <li role="presentation"><a href="./list.html">已添加</a></li>
+        <li role="presentation" class="active"><a href="#">导出</a></li>
+      </ul>
+    </div>
+    <a class="navbar-brand navbar-right" href="./index.html">注销</a>
+  </div>
+</nav>
+
+<div class="container" id='container'>
+
+  <div class="box">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>海报</th>
+        <th>名称</th>
+        <th>创建时间</th>
+      </tr>
+      </thead>
+      <tbody id="list">
+      <tr>
+        <td>
+          <div class="checkbox"><label><input type="checkbox" value="124125125"><b>1</b></label></div>
+        </td>
+        <td><img src="http://192.168.1.101:8090/vms/static/large_gongfu.jpg"></td>
+        <td>功夫熊猫</td>
+        <td>2017-5-16</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="checkbox selectAll"><label><input type="checkbox" value="124125125"><b>全选</b></label></div>
+  <button type="button" class="btn btn-primary">一键导出Excel</button>
+</div>
+
+</body>
+<script id='content-tpl' type='text/html'>
+  {{each data value index}}
+  <tr>
+    <td>
+      <div class="checkbox"><label><input type="checkbox" value={{value.id}}><b>{{index+1}}</b></label></div>
+    </td>
+    <td><img src={{value.posterLarge}} alt='嗨学营'></td>
+    <td>{{value.name}}</td>
+    <td>{{value.createdTime | $moment}}</td>
+  </tr>
+  {{/each}}
+</script>
+
+
+<script>
+  $(function () {
+    //添加一个时间格式化过滤器
+    template.defaults.imports.$moment = function (value) {
+      function add0(m) {
+        return m < 10 ? '0' + m : m
+      }
+
+      var time = new Date(value);
+      var y = time.getFullYear();
+      var m = time.getMonth() + 1;
+      var d = time.getDate();
+      var h = time.getHours();
+      var mm = time.getMinutes();
+      var s = time.getSeconds();
+      return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s)
+    }
+
+    //渲染列表
+    renderList()
+    function renderList() {
+      $.get('/vms/getAll', function (res) {
+        if (res.code == 401) {
+          alert('获取数据失败,请重新登录')
+          window.location.replace('./index.html')
+          return
+        }
+        if (res.code == 200) {
+          var html = template('content-tpl', res)
+          $('#list').html(html)
+        } else {
+          alert('获取数据失败')
+        }
+      })
+    }
+
+
+    //绑定事件
+//    $('.content').on('click', '.onLine', pushToLine)
+
+
+  })
+
+</script>
+</html>

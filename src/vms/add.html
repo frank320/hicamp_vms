@@ -38,6 +38,7 @@
       <ul class="nav nav-tabs">
         <li role="presentation" class="active"><a href="#">添加</a></li>
         <li role="presentation"><a href="./list.html">已添加</a></li>
+        <li role="presentation"><a href="./daoList.html">导出</a></li>
       </ul>
     </div>
     <a class="navbar-brand navbar-right" href="./index.html">注销</a>
@@ -153,6 +154,7 @@
     xhr.onload = function (r) {
       if (JSON.parse(this.responseText).code === 200) {
         alert('添加成功')
+        window.location.reload()
       } else {
         alert('添加失败')
       }
