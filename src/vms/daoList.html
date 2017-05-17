@@ -83,7 +83,7 @@
       </tr>
       </thead>
       <tbody id="list">
-     <!--list-->
+      <!--list-->
       </tbody>
     </table>
   </div>
@@ -100,7 +100,7 @@
   {{each data value index}}
   <tr>
     <td>
-      <div class="checkbox"><label><input type="checkbox" value={{value.id}}><b>{{index+1}}</b></label></div>
+      <div class="checkbox selectOne"><label><input type="checkbox" value={{value.id}}><b>{{index+1}}</b></label></div>
     </td>
     <td><img src={{value.posterLarge}} alt='嗨学营'></td>
     <td>{{value.name}}</td>
@@ -149,6 +149,16 @@
       $('#selectAll').prop('checked') ? $('#list input[type="checkbox"]').prop('checked', true) : $('#list input[type="checkbox"]').prop('checked', false)
     }
 
+    function selectOne() {
+      $('#selectAll').prop('checked', true)
+      $('#list input[type="checkbox"]').each(function () {
+        if (!$(this).prop('checked')) {
+          $('#selectAll').prop('checked', false)
+          return false
+        }
+      })
+    }
+
     function generateExcel() {
       //获取选中媒资的id
       var checkList = []
@@ -192,6 +202,7 @@
     //绑定事件
     $('.container').on('click', '.daoExcel', generateExcel)
     $('.container').on('click', '.selectAll', selectAll)
+    $('.container').on('click', '.selectOne', selectOne)
 
 
   })
