@@ -18,7 +18,7 @@ router.post('/generateExcel', (req, res)=> {
     .then(data=> {
       //获得Excel模板的buffer对象
       try {
-        var exlBuf = fs.readFileSync(path.join(__dirname, '../excelTemplate/template.xlsx'))
+        var exlBuf = fs.readFileSync(path.join(__dirname, '../excelTemplate/content_template.xlsx'))
       } catch (e) {
         return res.json({
           code: 500,
@@ -37,7 +37,10 @@ router.post('/generateExcel', (req, res)=> {
         try {
           fs.writeFileSync(config.resourcePath + newExcelName, exlBuf2)
         } catch (e) {
-
+          return res.json({
+            code: 500,
+            msg: e
+          })
         }
         return res.json({
           code: 200,
