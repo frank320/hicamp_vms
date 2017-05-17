@@ -6,7 +6,7 @@
 var router = require('express').Router();
 var fs = require("fs");
 var path = require('path');
-var ejsExcel = require("ejsExcel");
+var ejsExcel = require("ejsexcel");
 
 var config = require('../config');
 var Album = require('../model/album');

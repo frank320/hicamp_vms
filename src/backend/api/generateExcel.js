@@ -4,7 +4,7 @@
 const router = require('express').Router()
 const fs = require("fs")
 const path = require('path')
-const ejsExcel = require("ejsExcel")
+const ejsExcel = require("ejsexcel")
 
 const config = require('../config')
 const Album = require('../model/album')
