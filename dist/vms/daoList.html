@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HICAMP VMS</title>
+  <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+  <script src="./assets/js/jquery-2.2.0.min.js"></script>
+  <script src="./assets/js/bootstrap.min.js"></script>
+  <script src="./assets/js/template-web.js"></script>
+</head>
+
+<style>
+  #container {
+    height: 100%;
+    margin-top: 60px;
+  }
+
+  .nav-tabs a {
+    font-size: 18px;
+  }
+
+  .box {
+    height: 500px;
+    overflow: auto;
+  }
+
+  #list tr:nth-child(odd) {
+    background-color: #f9f9f9;
+  }
+
+  #list tr img {
+    height: 40px;
+  }
+
+  .wrap {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .wrap button {
+    margin-top: 5px;
+  }
+
+  .selectAll {
+    display: inline-block;
+    float: left;
+  }
+
+  .daoExcel {
+    float: right;
+  }
+
+</style>
+
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <!--<a class="navbar-brand" href="./add.html">添加</a>-->
+      <!--<a class="navbar-brand" href="#">已添加列表</a>-->
+      <ul class="nav nav-tabs">
+        <li role="presentation"><a href="./add.html">添加</a></li>
+        <li role="presentation"><a href="./list.html">已添加</a></li>
+        <li role="presentation" class="active"><a href="#">导出</a></li>
+      </ul>
+    </div>
+    <a class="navbar-brand navbar-right" href="./index.html">注销</a>
+  </div>
+</nav>
+
+<div class="container" id='container'>
+
+  <div class="box">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>序号</th>
+        <th>海报</th>
+        <th>名称</th>
+        <th>创建时间</th>
+      </tr>
+      </thead>
+      <tbody id="list">
+      <!--list-->
+      </tbody>
+    </table>
+  </div>
+  <div class="wrap">
+    <div class="checkbox selectAll"><label><input id='selectAll' type="checkbox" value="全选"><b>全选</b></label></div>
+
+    <button type="button" class="btn btn-primary daoExcel">一键导出Excel</button>
+
+  </div>
+</div>
+
+</body>
+<script id='content-tpl' type='text/html'>
+  {{each data value index}}
+  <tr>
+    <td>
+      <div class="checkbox selectOne"><label><input type="checkbox" value={{value.id}}><b>{{index+1}}</b></label></div>
+    </td>
+    <td><img src={{value.posterLarge}} alt='嗨学营'></td>
+    <td>{{value.name}}</td>
+    <td>{{value.createdTime | $moment}}</td>
+  </tr>
+  {{/each}}
+</script>
+
+
+<script>
+  $(function () {
+    //添加一个时间格式化过滤器
+    template.defaults.imports.$moment = function (value) {
+      function add0(m) {
+        return m < 10 ? '0' + m : m
+      }
+
+      var time = new Date(value);
+      var y = time.getFullYear();
+      var m = time.getMonth() + 1;
+      var d = time.getDate();
+      var h = time.getHours();
+      var mm = time.getMinutes();
+      var s = time.getSeconds();
+      return y + '-' + add0(m) + '-' + add0(d) + ' ' + add0(h) + ':' + add0(mm) + ':' + add0(s)
+    }
+    //渲染列表
+    renderList()
+    function renderList() {
+      $.get('/vms/getAll', function (res) {
+        if (res.code == 401) {
+          alert('获取数据失败,请重新登录')
+          window.location.replace('./index.html')
+          return
+        }
+        if (res.code == 200) {
+          var html = template('content-tpl', res)
+          $('#list').html(html)
+        } else {
+          alert('获取数据失败')
+        }
+      })
+    }
+
+    function selectAll() {
+      $('#selectAll').prop('checked') ? $('#list input[type="checkbox"]').prop('checked', true) : $('#list input[type="checkbox"]').prop('checked', false)
+    }
+
+    function selectOne() {
+      $('#selectAll').prop('checked', true)
+      $('#list input[type="checkbox"]').each(function () {
+        if (!$(this).prop('checked')) {
+          $('#selectAll').prop('checked', false)
+          return false
+        }
+      })
+    }
+
+    function generateExcel() {
+      //获取选中媒资的id
+      var checkList = []
+      $('#list input[type="checkbox"]:checked').each(function () {
+        if ($(this).val()) checkList.push($(this).val())
+      })
+      if (checkList.length === 0) {
+        alert('请选择需要导出的媒资')
+        return
+      }
+      $('button.daoExcel').prop('disabled', true).text('正在导出...')
+      $.ajax({
+        type: "POST",
+        url: '/vms/generateExcel',
+        data: {
+          checkList: JSON.stringify(checkList)
+        },
+        success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
+          if (res.code == 200) {
+            $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
+            //保存表格
+            window.open(res.excelPath, "_self")
+          } else {
+            alert('操作失败')
+            $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
+          }
+
+        },
+        fail: function () {
+          alert('操作失败')
+          $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
+        }
+      })
+    }
+
+    //绑定事件
+    $('.container').on('click', '.daoExcel', generateExcel)
+    $('.container').on('click', '.selectAll', selectAll)
+    $('.container').on('click', '.selectOne', selectOne)
+
+
+  })
+
+</script>
+</html>
