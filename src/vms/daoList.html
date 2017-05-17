@@ -39,10 +39,6 @@
     overflow: hidden;
   }
 
-  .wrap div:last-child {
-    float: right;
-  }
-
   .wrap button {
     margin-top: 5px;
   }
@@ -52,9 +48,10 @@
     float: left;
   }
 
-  .btn {
+  .daoExcel {
     float: right;
   }
+
 </style>
 
 <body>
@@ -86,23 +83,15 @@
       </tr>
       </thead>
       <tbody id="list">
-      <tr>
-        <td>
-          <div class="checkbox"><label><input type="checkbox" value="124125125"><b>1</b></label></div>
-        </td>
-        <td><img src="http://192.168.1.101:8090/vms/static/large_gongfu.jpg"></td>
-        <td>功夫熊猫</td>
-        <td>2017-5-16</td>
-      </tr>
+     <!--list-->
       </tbody>
     </table>
   </div>
   <div class="wrap">
     <div class="checkbox selectAll"><label><input id='selectAll' type="checkbox" value="全选"><b>全选</b></label></div>
-    <div>
-      <button type="button" class="btn btn-primary daoExcel">一键生成Excel</button>
-    </div>
-    <div><a href="" id='downloadExcel' style='display: none'>下载Excel</a></div>
+
+    <button type="button" class="btn btn-primary daoExcel">一键导出Excel</button>
+
   </div>
 </div>
 
@@ -184,17 +173,18 @@
             return
           }
           if (res.code == 200) {
-            alert('suuccess')
-            $('button.daoExcel').prop('disabled', false).text('一键生成Excel')
-            $('#downloadExcel').attr('href', res.excelPath)
-            $('#downloadExcel').css('display', 'block')
+            $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
+            //保存表格
+            window.open(res.excelPath, "_self")
           } else {
             alert('操作失败')
+            $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
           }
 
         },
         fail: function () {
           alert('操作失败')
+          $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
         }
       })
     }
