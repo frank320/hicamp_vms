@@ -24,7 +24,8 @@ gulp.task('compile', ['clean'], function () {
 })
 //移动其文件
 gulp.task('extrals', ['compile'], function () {
-  return gulp.src('src/vms/**/*.*').pipe(gulp.dest('dist/vms'))
+  gulp.src('src/backend/excelTemplate/*.xlsx').pipe(gulp.dest('dist/backend/excelTemplate'))
+  gulp.src('src/vms/**/*.*').pipe(gulp.dest('dist/vms'))
 })
 
 gulp.task('build', ['extrals'], function () {
