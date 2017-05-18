@@ -101,6 +101,11 @@
     width: 30%;
   }
 
+  .content li:nth-child(3) span {
+    /*font-weight: 600;*/
+    font-style: italic;
+  }
+
   .content li:nth-child(2) {
     width: 20%;
   }
@@ -243,17 +248,18 @@
     <li><img src={{value.posterLarge}} alt="嗨学营"></li>
     <li>
       <div>
-        资源名称：{{value.name}}
+        <span>名称：</span>{{value.name}}
       </div>
       <div>
-        资源Id：{{value.id}}
+        <span> &nbsp;&nbsp;&nbsp;id ：</span> {{value.id}}
       </div>
       <div>
-        创建时间：{{value.createdTime | $moment}}
+        <span>类型：</span>{{value.isAlbum ? '剧集':'单片'}}
       </div>
       <div>
-        更新时间：{{value.updateTime | $moment}}
+        <span>创建：</span>{{value.createdTime | $moment}}
       </div>
+
 
     </li>
     <li contentcode={{value.id}} class="btns">
@@ -459,6 +465,9 @@
 
     //删除功能
     function deleteOne() {
+      if (!window.confirm('确定要删除吗?')) {
+        return
+      }
       var id = $(this).parent().attr('contentcode')
       $.ajax({
         url: '/vms/deleteOne',
