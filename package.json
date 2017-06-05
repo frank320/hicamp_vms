@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js",
+    "dev": "node-dev index.js",
     "build": "gulp build",
     "dist": "pm2 start app.json"
   },
@@ -36,7 +36,7 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-load-plugins": "^1.5.0",
-    "nodemon": "^1.11.0",
+    "node-dev": "^3.1.3",
     "pm2": "^2.4.6",
     "run-sequence": "^1.2.2"
   }
