@@ -52,8 +52,13 @@
     </div>
     <div class="form-group">
       <label for="contentcode">资源id</label>
-      <input type="text" class="form-control" id="contentcode" name="contentcode" placeholder="请输入资源id" required>
+      <input type="text" class="form-control" id="contentcode" name="contentcode" placeholder="请输入资源id" disabled>
     </div>
+    <div class="form-group">
+      <label for="contentpath">资源路径</label>
+      <input type="text" class="form-control" id="contentpath" name="contentpath" placeholder="请输入资源的完整路径" required>
+    </div>
+
     <div class="form-group">
       <label for="copyright">版权信息</label>
       <input type="text" class="form-control" id="copyright" name="copyright" placeholder="请输入资源的版权信息" value='土星成长'>
@@ -151,17 +156,18 @@
       console.log(e.lengthComputable)
       console.log(e.loaded)
     }
-    xhr.onload = function (r) {
-      if (JSON.parse(this.responseText).code === 200) {
-        alert('添加成功')
+    xhr.onload = function () {
+      var res = JSON.parse(this.responseText)
+      if (res.code === 200) {
+        alert(res.msg)
         window.location.reload()
       } else {
-        alert('添加失败')
+        alert(res.msg)
       }
       $('button[type="submit"]').prop('disabled', false).text('点击添加')
 
-      if (JSON.parse(this.responseText).code === 401) {
-        alert('请重新登录')
+      if (res.code === 401) {
+        alert(res.msg)
         window.location.replace('./index.html')
       }
     }

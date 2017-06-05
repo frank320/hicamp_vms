@@ -4,7 +4,9 @@
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
+
 const formidable = require('formidable')
+const ffmpeg = require('fluent-ffmpeg')
 const router = require('express').Router()
 
 const config = require('../config')
@@ -82,10 +84,19 @@ router.post('/add', function (req, res) {
 
   // 指定本次上传的文件保持扩展名（默认是false，没有扩展名）
   form.keepExtensions = true
-  form.parse(req, function (err, fields, files) {
+  return form.parse(req, function (err, fields, files) {
+
+    //判断资源路径的有效性
+    const contentpath = fields.contentpath
+    if (!contentpath || !fs.existsSync(contentpath)) {
+      return res.json({
+        code: 110,
+        msg: '资源路径输入错误'
+      })
+    }
     const uploadData = {
       copyright: fields.copyright,
-      id: fields.contentcode,
+      //id: fields.contentcode,
       name: fields.name,
       summary: fields.summary,
       tags: JSON.parse(fields.tags),
@@ -95,52 +106,135 @@ router.post('/add', function (req, res) {
       vip: parseInt(fields.vip),
       isAlbum: parseInt(fields.isAlbum),
       createdTime: Date.now(),
-      updateTime: Date.now()
+      updateTime: Date.now(),
+      videos: []
     }
 
     //文件重命名 保持原有的命名
     let posterLargeName = ''
     let posterSmallName = ''
+    //创建存放海报的文件夹
+    const bundlePoster = path.join(config.resourcePath, 'bundlePoster')
+    if (!fs.existsSync(bundlePoster)) {
+      fs.mkdirSync(bundlePoster)
+    }
+    const bundleAvatar = path.join(config.resourcePath, 'bundleAvatar')
+    if (!fs.existsSync(bundleAvatar)) {
+      fs.mkdirSync(bundleAvatar)
+    }
+
     try {
       if (files.posterLarge && files.posterLarge.name && files.posterLarge.type.startsWith('image')) {
-        posterLargeName = 'large_' + files.posterLarge.name
-        fs.renameSync(files.posterLarge.path, path.join(config.resourcePath, posterLargeName))
+        posterLargeName = files.posterLarge.name
+        fs.renameSync(files.posterLarge.path, path.join(bundlePoster, posterLargeName))
       }
       if (files.posterSmall && files.posterSmall.name && files.posterSmall.type.startsWith('image')) {
-        posterSmallName = 'small_' + files.posterSmall.name
-        fs.renameSync(files.posterSmall.path, path.join(config.resourcePath, posterSmallName))
+        posterSmallName = files.posterSmall.name
+        fs.renameSync(files.posterSmall.path, path.join(bundleAvatar, posterSmallName))
       }
 
-
     } catch (e) {
-      res.json({
+      return res.json({
         code: 0,
         msg: '文件保存出错'
       })
     }
     let localIp = getLocalIP()
-
+    //生成图片路径
     function imgUrl(imgName) {
       return `http://${localIp}:${config.port}${config.prefix}${config.staicRoute}/${imgName}`
     }
 
-    uploadData.posterLarge = imgUrl(posterLargeName)
-    uploadData.posterSmall = imgUrl(posterSmallName)
-    //存入数据库
-    const album = new Album(uploadData)
-    album.save()
-      .then(()=> {
-        res.json({
-          code: 200,
-          msg: '存入成功'
-        })
-      }).catch(e=> {
-      res.json({
-        msg: e
+    uploadData.posterLarge = imgUrl(`bundlePoster/${posterLargeName}`)
+    uploadData.posterSmall = imgUrl(`bundleAvatar/${posterSmallName}`)
+
+    //设置剧集资源id
+    uploadData.id = Math.floor(Date.now() / 1000)
+
+    //获取剧集资源信息
+    function isDir(pathName) {//pathName为文件的绝对路径
+      const stat = fs.lstatSync(pathName)
+      return stat.isDirectory()
+    }
+
+    function isImg(fileName) {
+      return /\.(jpg|png|gif|jepg)$/i.test(fileName)
+    }
+
+    //获取无后缀文件名
+    function getNoneExtFileName(fileName) {
+      return /(.+)\.\w+$/.exec(fileName)[1]
+    }
+
+    const contentFiles = fs.readdirSync(contentpath)
+    const bundleName = fields.name
+
+    let videos = []
+    let totalFiles = contentFiles.length
+    let conutFlag = 0
+    contentFiles.forEach(function (videoDir) {
+      const VideoDirPath = path.join(contentpath, videoDir)
+      if (!isDir(VideoDirPath)) {
+        totalFiles--
+        return
+      }
+      //读取视频文件夹下的视频文件
+      const videoFiles = fs.readdirSync(VideoDirPath)
+      var videoFilePath = null
+      var videoName = null
+      if (videoFiles.length === 1) {
+        //只有视频 直接抽帧
+        videoFilePath = path.join(VideoDirPath, videoFiles[0])
+        videoName = getNoneExtFileName(videoFiles[0])
+      }
+      if (videoFiles.length === 2) {
+        //若有海报
+        const video = isImg(videoFiles[0]) ? videoFiles[1] : videoFiles[0]
+        videoFilePath = path.join(VideoDirPath, video)
+        videoName = getNoneExtFileName(video)
+      }
+      if (!videoFilePath) {
+        console.log(bundleDir + videoDir + '视频文件不存在')
+        return
+      }
+      //读取视频元信息
+      ffmpeg.ffprobe(videoFilePath, function (err, metadata) {
+        if (err) {
+          console.log(videoName + '获取视频元信息失败')
+        } else {
+          videos.push({
+            id: parseInt(uploadData.id + '000') + parseInt(videoDir) + '',
+            name: videoName,
+            duration: metadata.format.duration,
+            size: metadata.format.size,
+            ts_ftp_url: videoFilePath,
+            poster: `http://${localIp}:${config.port}${config.prefix}${config.staicRoute}/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
+          })
+          conutFlag++
+          if (conutFlag == totalFiles) {
+            //排序
+            videos.sort(function (a, b) {
+              return (a.id - b.id)
+            })
+            uploadData.videos = videos
+            //读取完毕 存入数据库
+            const album = new Album(uploadData)
+            return album.save()
+              .then(()=> {
+                res.json({
+                  code: 200,
+                  msg: '存入成功'
+                })
+              }).catch(e=> {
+                res.json({
+                  msg: e
+                })
+              })
+          }
+        }
       })
+
     })
   })
-
 })
-
 module.exports = router
