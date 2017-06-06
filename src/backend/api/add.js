@@ -135,7 +135,7 @@ router.post('/add', function (req, res) {
 
     } catch (e) {
       return res.json({
-        code: 0,
+        code: 500,
         msg: '文件保存出错'
       })
     }
@@ -166,6 +166,13 @@ router.post('/add', function (req, res) {
       return /(.+)\.\w+$/.exec(fileName)[1]
     }
 
+    //格式化时间
+    function formatTime(second) {
+      second = parseInt(second)
+      return [parseInt(second / 60 / 60), parseInt(second / 60) % 60, second % 60].join(":")
+        .replace(/\b(\d)\b/g, "0$1");
+    }
+
     const contentFiles = fs.readdirSync(contentpath)
     const bundleName = fields.name
 
@@ -183,7 +190,7 @@ router.post('/add', function (req, res) {
       var videoFilePath = null
       var videoName = null
       if (videoFiles.length === 1) {
-        //只有视频 直接抽帧
+        //只有视频
         videoFilePath = path.join(VideoDirPath, videoFiles[0])
         videoName = getNoneExtFileName(videoFiles[0])
       }
@@ -194,7 +201,7 @@ router.post('/add', function (req, res) {
         videoName = getNoneExtFileName(video)
       }
       if (!videoFilePath) {
-        console.log(bundleDir + videoDir + '视频文件不存在')
+        console.log(bundleName + videoDir + '视频文件不存在')
         return
       }
       //读取视频元信息
@@ -205,7 +212,7 @@ router.post('/add', function (req, res) {
           videos.push({
             id: parseInt(uploadData.id + '000') + parseInt(videoDir) + '',
             name: videoName,
-            duration: metadata.format.duration,
+            duration: formatTime(metadata.format.duration),
             size: metadata.format.size,
             ts_ftp_url: videoFilePath,
             poster: `http://${localIp}:${config.port}${config.prefix}${config.staicRoute}/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
@@ -219,7 +226,8 @@ router.post('/add', function (req, res) {
             uploadData.videos = videos
             //读取完毕 存入数据库
             const album = new Album(uploadData)
-            return album.save()
+            return album
+              .save()
               .then(()=> {
                 res.json({
                   code: 200,
@@ -227,6 +235,7 @@ router.post('/add', function (req, res) {
                 })
               }).catch(e=> {
                 res.json({
+                  code: 500,
                   msg: e
                 })
               })
