@@ -149,7 +149,7 @@ router.post('/add', function (req, res) {
     uploadData.posterSmall = imgUrl(`bundleAvatar/${posterSmallName}`)
 
     //设置剧集资源id
-    uploadData.id = Date.now() + '000'
+    uploadData.id = Math.ceil(Date.now() / 1000) + '000'
 
     //获取剧集资源信息
     function isDir(pathName) {//pathName为文件的绝对路径
@@ -214,7 +214,7 @@ router.post('/add', function (req, res) {
             name: videoName,
             duration: formatTime(metadata.format.duration),
             size: metadata.format.size,
-            ts_ftp_url: videoFilePath,
+            fielPath: `/${bundleName}/${videoName}.ts`,
             poster: `/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
           })
           conutFlag++
