@@ -245,7 +245,7 @@
   {{each data value index}}
   <ul>
     <li><label>{{index | $order}}</label></li>
-    <li><img src={{'/vms'+value.posterLarge}} alt="嗨学营"></li>
+    <li><img src={{'/vms/static'+value.posterLarge}} alt="嗨学营"></li>
     <li>
       <div>
         <span>名称：</span>{{value.name}}
@@ -292,10 +292,10 @@
     <span>资源Id：</span>{{id}}
   </div>
   <div class='posterLarge'>
-    <span>大海报：</span>{{'/vms'+posterLarge}} <br><img src={{'/vms'+posterLarge}} alt="">
+    <span>大海报：</span>{{'/vms/static'+posterLarge}} <br><img src={{'/vms/static'+posterLarge}} alt="">
   </div>
   <div class='posterSmall'>
-    <span>小海报：</span>{{'/vms'+posterSmall}} <br><img src={{'/vms'+posterSmall}} alt="">
+    <span>小海报：</span>{{'/vms/static'+posterSmall}} <br><img src={{'/vms/static'+posterSmall}} alt="">
   </div>
   <div>
     <span>版权：</span>{{copyright}}

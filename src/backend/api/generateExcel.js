@@ -18,13 +18,16 @@ router.post('/generateExcel', (req, res)=> {
     .then(data=> {
       //获得Excel模板的buffer对象
       try {
-        var exlBuf = fs.readFileSync(path.join(__dirname, '../excelTemplate/content_template.xlsx'))
+        var exlBuf = fs.readFileSync(path.join(__dirname, '../template/excel_template.xlsx'))
       } catch (e) {
         return res.json({
           code: 500,
           msg: e
         })
       }
+      //添加图片服务器的地址
+      const imgHost = config.images_server
+      data.imgHost = imgHost
       //用数据源(对象)data渲染Excel模板
       return ejsExcel.renderExcelCb(exlBuf, data, function (err, exlBuf2) {
         if (err) {
@@ -33,7 +36,7 @@ router.post('/generateExcel', (req, res)=> {
             msg: err
           })
         }
-        var newExcelName = "template.xlsx"
+        var newExcelName = "daoExcel.xlsx"
         try {
           fs.writeFileSync(config.resourcePath + newExcelName, exlBuf2)
         } catch (e) {

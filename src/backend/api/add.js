@@ -142,7 +142,7 @@ router.post('/add', function (req, res) {
     let localIp = getLocalIP()
     //生成图片路径
     function imgUrl(imgName) {
-      return `${config.staicRoute}/${imgName}`
+      return `/${imgName}`
     }
 
     uploadData.posterLarge = imgUrl(`bundlePoster/${posterLargeName}`)
@@ -215,7 +215,7 @@ router.post('/add', function (req, res) {
             duration: formatTime(metadata.format.duration),
             size: metadata.format.size,
             ts_ftp_url: videoFilePath,
-            poster: `${config.staicRoute}/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
+            poster: `/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
           })
           conutFlag++
           if (conutFlag == totalFiles) {
