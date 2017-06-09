@@ -20,6 +20,7 @@
   "author": "zhangshipeng@tuixng2010.com",
   "license": "ISC",
   "dependencies": {
+    "art-template": "^3.0.3",
     "body-parser": "^1.17.1",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.3",
@@ -28,6 +29,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "formidable": "^1.1.1",
     "glob": "^7.1.1",
+    "moment": "^2.18.1",
     "mongoose": "^4.9.6",
     "node-fetch": "^1.6.3"
   },

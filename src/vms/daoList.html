@@ -42,6 +42,7 @@
 
   .wrap button {
     margin-top: 5px;
+    margin-left: 10px;
   }
 
   .selectAll {
@@ -49,7 +50,7 @@
     float: left;
   }
 
-  .daoExcel {
+  .daoExcel, .daoXml {
     float: right;
   }
 
@@ -94,6 +95,7 @@
     <div class="checkbox selectAll"><label><input id='selectAll' type="checkbox" value="全选"><b>全选</b></label></div>
 
     <button type="button" class="btn btn-primary daoExcel">一键导出Excel</button>
+    <button type="button" class="btn btn-primary daoXml">一键导出Xml</button>
 
   </div>
 </div>
@@ -207,8 +209,49 @@
       })
     }
 
+    function generateXml() {
+      //获取选中媒资的id
+      var checkList = []
+      $('#list input[type="checkbox"]:checked').each(function () {
+        if ($(this).val()) checkList.push($(this).val())
+      })
+      if (checkList.length === 0) {
+        alert('请选择需要导出的媒资')
+        return
+      }
+      $('button.daoXml').prop('disabled', true).text('正在导出...')
+      $.ajax({
+        type: "POST",
+        url: '/vms/generateXml',
+        data: {
+          id: checkList[0]
+        },
+        success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
+          if (res.code == 200) {
+            $('button.daoXml').prop('disabled', false).text('一键导出Xml')
+            //保存xml文件
+            window.open(res.xmlPath, "_self")
+          } else {
+            alert('操作失败')
+            $('button.daoXml').prop('disabled', false).text('一键导出Xml')
+          }
+
+        },
+        fail: function () {
+          alert('操作失败')
+          $('button.daoXml').prop('disabled', false).text('一键导出Xml')
+        }
+      })
+    }
+
     //绑定事件
     $('.container').on('click', '.daoExcel', generateExcel)
+    $('.container').on('click', '.daoXml', generateXml)
     $('.container').on('click', '.selectAll', selectAll)
     $('.container').on('click', '.selectOne', selectOne)
 

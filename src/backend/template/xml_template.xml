@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!--DOCTYPE ADI SYSTEM 'ADI.DTD' -->
+<CDN_XML>
+    <ask_for_upload>
+        <ADI>
+            <Metadata>
+                <AMS Provider="土星教育" Product="MOD" Asset_Name="{{name}}"
+                     Version_Major="1" Version_Minor="0" Description="This is a bundle package"
+                     Creation_Date="{{currentTime.split(' ')[0]}}" Provider_ID="txjy"
+                     Asset_ID="{{'TXJY'+id+'000'}}" Asset_Class="package" Verb=""/>
+                <App_Data App="VOD" Name="Metadata_Spec_Version" Value="CableLabsVOD1.1"/>
+            </Metadata>
+            {{each videos as value index}}
+            <Asset>
+                <Metadata>
+                    <AMS Provider="土星教育" Product="MOD" Asset_Name="{{name}}"
+                         Version_Major="1" Version_Minor="0" Description="This is a title"
+                         Creation_Date="{{currentTime}}" Provider_ID="txjy"
+                         Asset_ID="{{'TXJY'+value.id+'001'}}" Asset_Class="title" Verb=""/>
+                    <App_Data App="VOD" Name="Title" Value="{{name}}"/>
+                    <App_Data App="VOD" Name="Summary_Short" Value="{{summary}}"/>
+                    <App_Data App="VOD" Name="Licensing_Window_Start" Value="2017-06-09"/>
+                    <App_Data App="VOD" Name="Licensing_Window_End" Value="2020-06-09"/>
+                    <App_Data App="VOD" Name="Chapter" Value="{{index+1}}"/>
+                    <App_Data App="VOD" Name="PositiveTotal" Value="{{videos.length}}"/>
+
+
+                    <!--可选字段-->
+                    <App_Data App="VOD" Name="Type" Value="title"/>
+                    <!--<App_Data App="VOD" Name="Audio_Type" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Foreign_Language" Value=""/>-->
+                    <App_Data App="VOD" Name="Serial_Id" Value="{{name}}"/>
+                    <App_Data App="VOD" Name="ShowType" Value="电视剧"/>
+                    <!--<App_Data App="VOD" Name="ProducingArea" Value="韩国"/>-->
+                    <!--<App_Data App="VOD" Name="Audio_Language" Value="韩语"/>-->
+                    <!--<App_Data App="VOD" Name="Medal_Records" Value="华数传媒"/>-->
+                    <!--<App_Data App="VOD" Name="Caption_Type" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Title_Brief" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Audio_Encode_Format" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Director" Value="韩哲京"/>-->
+                    <!--<App_Data App="VOD" Name="Actors" Value="庆收真,李俊,崔允素,郑民镇"/>-->
+                    <!--<App_Data App="VOD" Name="Summary_Long"-->
+                    <!--Value="本剧追溯于“六二五”朝鲜战争前的杀人事件，为了养育幼子而不得已杀人的真凶由于战争获得了自由，因为战争背负着罪恶始终无法洗脱罪名的人却要面对死亡。"/>-->
+                    <!--<App_Data App="VOD" Name="VideoType" Value="SD"/>-->
+                    <!--<App_Data App="VOD" Name="Screen_Size" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Carrier_Type" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Subtitle_Languages" Value="简体"/>-->
+                    <!--<App_Data App="VOD" Name="Audio_Type" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Color" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Screen_Quality" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Sound_Quality" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="Real_Length" Value="00:35:30:14"/>-->
+                    <!--<App_Data App="VOD" Name="Eutry_Point" Value="00:00:00:00"/>-->
+                    <!--<App_Data App="VOD" Name="Made_Mode" Value="PAL"/>-->
+                    <!--<App_Data App="VOD" Name="Resume"-->
+                    <!--Value="本剧追溯于“六二五”朝鲜战争前的杀人事件，为了养育幼子而不得已杀人的真凶由于战争获得了自由，因为战争背负着罪恶始终无法洗脱罪名的人却要面对死亡。"/>-->
+                    <!--<App_Data App="VOD" Name="MARKSIGN" Value=""/>-->
+                    <!--<App_Data App="VOD" Name="USERBIT" Value=""/>-->
+                </Metadata>
+                <Asset>
+                    <Metadata>
+                        <AMS Provider="土星教育" Product="MOD" Asset_Name="{{value.name}}"
+                             Version_Major="1" Version_Minor="0" Description="This is a content asset"
+                             Creation_Date="{{currentTime}}" Provider_ID="txjy"
+                             Asset_ID="{{'TXJY'+value.id+'002'}}" Asset_Class="movie" Verb=""/>
+                        <App_Data App="VOD" Name="Title" Value="{{value.name}}"/>
+
+                        <!--可选字段-->
+                        <App_Data App="VOD" Name="Type" Value="movie"/>
+                        <!--<App_Data App="VOD" Name="Encode_Format" Value="MPEG2_IBP" />-->
+                        <App_Data App="VOD" Name="VideoType" Value="HD"/>
+                        <App_Data App="VOD" Name="Run_Time" Value="{{value.duration}}"/>
+                        <!--<App_Data App="VOD" Name="Up_Success" Value="0" />-->
+                        <App_Data App="VOD" Name="Content_FileSize" Value="{{value.size}}"/>
+                        <!--<App_Data App="VOD" Name="Content_CheckSum"-->
+                        <!--Value="a82c271a566c5a6d4ffbea9f2129d57a" />-->
+                    </Metadata>
+                    <Content Value="{{fileServer+value.filePath}}"/>
+                </Asset>
+            </Asset>
+            {{/each}}
+        </ADI>
+    </ask_for_upload>
+</CDN_XML>
