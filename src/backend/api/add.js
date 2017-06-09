@@ -142,14 +142,14 @@ router.post('/add', function (req, res) {
     let localIp = getLocalIP()
     //生成图片路径
     function imgUrl(imgName) {
-      return `http://${localIp}:${config.port}${config.prefix}${config.staicRoute}/${imgName}`
+      return `${config.staicRoute}/${imgName}`
     }
 
     uploadData.posterLarge = imgUrl(`bundlePoster/${posterLargeName}`)
     uploadData.posterSmall = imgUrl(`bundleAvatar/${posterSmallName}`)
 
     //设置剧集资源id
-    uploadData.id = Math.floor(Date.now() / 1000)
+    uploadData.id = Date.now() + '000'
 
     //获取剧集资源信息
     function isDir(pathName) {//pathName为文件的绝对路径
@@ -174,7 +174,7 @@ router.post('/add', function (req, res) {
     }
 
     const contentFiles = fs.readdirSync(contentpath)
-    const bundleName = fields.name
+    const bundleName = /\\([^\\]+)$/.exec(contentpath)[1] || fields.name
 
     let videos = []
     let totalFiles = contentFiles.length
@@ -210,12 +210,12 @@ router.post('/add', function (req, res) {
           console.log(videoName + '获取视频元信息失败')
         } else {
           videos.push({
-            id: parseInt(uploadData.id + '000') + parseInt(videoDir) + '',
+            id: parseInt(uploadData.id) + parseInt(videoDir) + '',
             name: videoName,
             duration: formatTime(metadata.format.duration),
             size: metadata.format.size,
             ts_ftp_url: videoFilePath,
-            poster: `http://${localIp}:${config.port}${config.prefix}${config.staicRoute}/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
+            poster: `${config.staicRoute}/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
           })
           conutFlag++
           if (conutFlag == totalFiles) {

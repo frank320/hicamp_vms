@@ -75,8 +75,12 @@ glob.sync('./api/**/*.js', {cwd: __dirname}).forEach(item => {
 // Use native promises in mongoose
 mongoose.Promise = global.Promise
 // 连接数据库
-mongoose.connection.once('open', ()=> {
-  console.log('mongodb connect successfully')
+mongoose.connection.once('open', (err)=> {
+  if (err) {
+    console.err(err)
+  } else {
+    console.log('mongodb connect successfully')
+  }
 })
 mongoose.connection.on('error', console.error.bind(console, 'connection error'))
 mongoose.connect(config.dbbase)
