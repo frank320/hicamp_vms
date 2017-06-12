@@ -5,7 +5,7 @@
             <Metadata>
                 <AMS Provider="土星教育" Product="MOD" Asset_Name="{{name}}"
                      Version_Major="1" Version_Minor="0" Description="This is a bundle package"
-                     Creation_Date="{{currentTime.split(' ')[0]}}" Provider_ID="txjy"
+                     Creation_Date="{{currentTime.split(' ')[0]}}" Provider_ID="TXJY"
                      Asset_ID="{{'TXJY'+id+'000'}}" Asset_Class="package" Verb=""/>
                 <App_Data App="VOD" Name="Metadata_Spec_Version" Value="CableLabsVOD1.1"/>
             </Metadata>
@@ -14,7 +14,7 @@
                 <Metadata>
                     <AMS Provider="土星教育" Product="MOD" Asset_Name="{{name}}"
                          Version_Major="1" Version_Minor="0" Description="This is a title"
-                         Creation_Date="{{currentTime}}" Provider_ID="txjy"
+                         Creation_Date="{{currentTime}}" Provider_ID="TXJY"
                          Asset_ID="{{'TXJY'+value.id+'001'}}" Asset_Class="title" Verb=""/>
                     <App_Data App="VOD" Name="Title" Value="{{name}}"/>
                     <App_Data App="VOD" Name="Summary_Short" Value="{{summary}}"/>
@@ -60,7 +60,7 @@
                     <Metadata>
                         <AMS Provider="土星教育" Product="MOD" Asset_Name="{{value.name}}"
                              Version_Major="1" Version_Minor="0" Description="This is a content asset"
-                             Creation_Date="{{currentTime}}" Provider_ID="txjy"
+                             Creation_Date="{{currentTime}}" Provider_ID="TXJY"
                              Asset_ID="{{'TXJY'+value.id+'002'}}" Asset_Class="movie" Verb=""/>
                         <App_Data App="VOD" Name="Title" Value="{{value.name}}"/>
 
