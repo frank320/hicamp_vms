@@ -214,7 +214,7 @@ router.post('/add', function (req, res) {
             name: videoName,
             duration: formatTime(metadata.format.duration),
             size: metadata.format.size,
-            filePath: `/${bundleName}/${videoName}.ts`,
+            filePath: `/${bundleName}/${videoDir}/${videoName}.ts`,
             poster: `/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
           })
           conutFlag++
