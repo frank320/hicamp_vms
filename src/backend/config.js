@@ -14,7 +14,7 @@ module.exports = {
   staicRoute: process.env.STATIC_ROUTE || '/static',
   prefix: process.env.PREFIX || '/vms',
   //images_server host
-  images_server: process.env.IMAGES_SERVER || 'http://192.168.1.101:9000/static',
+  images_server: process.env.IMAGES_SERVER || '/static',
   //登录账户设置
   account: process.env.ACCOUNT || 'admin',
   password: process.env.PASSWORD || 'admin',

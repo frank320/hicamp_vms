@@ -13,7 +13,7 @@
     "RESOURCE_PATH": "",
     "STATIC_ROUTE": "/static",
     "PREFIX": "/vms",
-    "IMAGES_SERVER": "",
+    "IMAGES_SERVER": "/static",
     "ACCOUNT": "admin",
     "PASSWORD": "admin",
     "COOKIE_EXP": "2"

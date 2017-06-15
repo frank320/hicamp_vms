@@ -15,7 +15,7 @@ var plugins = gulpLoadPlugins()
 var runSequence = require('run-sequence')
 var del = require('del')
 
-gulp.task('clean', del.bind(null, ['dist/*']))
+gulp.task('clean', del.bind(null, ['dist']))
 //转码es6代码
 gulp.task('compile', ['clean'], function () {
   return gulp.src(['src/backend/**/*.js'])
