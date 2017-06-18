@@ -145,6 +145,11 @@
       if ($(this).val()) tags.push($(this).val())
     })
 
+    if (tags.length > 6) {
+      alert('标签数量最多可选择6个')
+      return
+    }
+
     var f = e.target
     var formData = new FormData(f)
     formData.append('tags', JSON.stringify(tags))
