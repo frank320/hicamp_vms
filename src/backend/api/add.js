@@ -209,11 +209,12 @@ router.post('/add', function (req, res) {
         if (err) {
           console.log(videoName + '获取视频元信息失败')
         } else {
+          const size = metadata.format.size + ''
           videos.push({
             id: parseInt(uploadData.id) + parseInt(videoDir) + '',
             name: videoName,
             duration: formatTime(metadata.format.duration),
-            size: metadata.format.size,
+            size: size,
             filePath: `/${bundleName}/${videoDir}/${videoName}.ts`,
             poster: `/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
           })
