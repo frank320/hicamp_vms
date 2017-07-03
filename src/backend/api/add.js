@@ -177,74 +177,148 @@ router.post('/add', function (req, res) {
     const bundleName = /\\([^\\]+)$/.exec(contentpath)[1] || fields.name
 
     let videos = []
-    let totalFiles = contentFiles.length
-    let conutFlag = 0
-    contentFiles.forEach(function (videoDir) {
-      const VideoDirPath = path.join(contentpath, videoDir)
-      if (!isDir(VideoDirPath)) {
-        totalFiles--
-        return
-      }
-      //读取视频文件夹下的视频文件
-      const videoFiles = fs.readdirSync(VideoDirPath)
-      var videoFilePath = null
-      var videoName = null
-      if (videoFiles.length === 1) {
-        //只有视频
-        videoFilePath = path.join(VideoDirPath, videoFiles[0])
-        videoName = getNoneExtFileName(videoFiles[0])
-      }
-      if (videoFiles.length === 2) {
-        //若有海报
-        const video = isImg(videoFiles[0]) ? videoFiles[1] : videoFiles[0]
-        videoFilePath = path.join(VideoDirPath, video)
-        videoName = getNoneExtFileName(video)
-      }
-      if (!videoFilePath) {
-        console.log(bundleName + videoDir + '视频文件不存在')
-        return
-      }
-      //读取视频元信息
-      ffmpeg.ffprobe(videoFilePath, function (err, metadata) {
-        if (err) {
-          console.log(videoName + '获取视频元信息失败')
-        } else {
-          const size = parseInt(metadata.format.size/1000)//转化为kb计算
-          videos.push({
-            id: parseInt(uploadData.id) + parseInt(videoDir) + '',
-            name: videoName,
-            duration: formatTime(metadata.format.duration),
-            size: size,
-            filePath: `/${bundleName}/${videoDir}/${videoName}.ts`,
-            poster: `/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
-          })
-          conutFlag++
-          if (conutFlag == totalFiles) {
-            //排序
-            videos.sort(function (a, b) {
-              return (a.id - b.id)
-            })
-            uploadData.videos = videos
-            //读取完毕 存入数据库
-            const album = new Album(uploadData)
-            return album
-              .save()
-              .then(()=> {
-                res.json({
-                  code: 200,
-                  msg: '存入成功'
-                })
-              }).catch(e=> {
-                res.json({
-                  code: 500,
-                  msg: e
-                })
-              })
-          }
-        }
-      })
 
-    })
+    async function getVideosMetaData() {
+      try {
+        for (let videoDir of contentFiles) {
+          await new Promise(resolve=> {
+            const VideoDirPath = path.join(contentpath, videoDir)
+            if (!isDir(VideoDirPath)) {
+              return resolve('not dir')
+            }
+            //读取视频文件夹下的视频文件
+            const videoFiles = fs.readdirSync(VideoDirPath)
+            var videoFilePath = null
+            var videoName = null
+            if (videoFiles.length === 1) {
+              //只有视频
+              videoFilePath = path.join(VideoDirPath, videoFiles[0])
+              videoName = getNoneExtFileName(videoFiles[0])
+            }
+            if (videoFiles.length === 2) {
+              //若有海报
+              const video = isImg(videoFiles[0]) ? videoFiles[1] : videoFiles[0]
+              videoFilePath = path.join(VideoDirPath, video)
+              videoName = getNoneExtFileName(video)
+            }
+            if (!videoFilePath) {
+              console.log(bundleName + videoDir + '视频文件不存在')
+              return resolve('not exsit')
+            }
+            //读取视频元信息
+            ffmpeg.ffprobe(videoFilePath, function (err, metadata) {
+              if (err) {
+                console.log(videoName + '获取视频元信息失败')
+                return resolve('fail')
+              } else {
+                const size = parseInt(metadata.format.size / 1000)//转化为kb计算
+                videos.push({
+                  id: parseInt(uploadData.id) + parseInt(videoDir) + '',
+                  name: videoName,
+                  duration: formatTime(metadata.format.duration),
+                  size: size,
+                  filePath: `/${bundleName}/${videoDir}/${videoName}.ts`,
+                  poster: `/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
+                })
+                return resolve('success')
+              }
+            })
+          })
+        }
+
+      } catch (e) {
+        //over look error
+      }
+      //排序
+      videos.sort(function (a, b) {
+        return (a.id - b.id)
+      })
+      uploadData.videos = videos
+      //读取完毕 存入数据库
+      const album = new Album(uploadData)
+      return album
+        .save()
+        .then(()=> {
+          res.json({
+            code: 200,
+            msg: '存入成功'
+          })
+        }).catch(e=> {
+          res.json({
+            code: 500,
+            msg: e
+          })
+        })
+    }
+
+    getVideosMetaData()
+
+    //contentFiles.forEach(function (videoDir) {
+    //  const VideoDirPath = path.join(contentpath, videoDir)
+    //  if (!isDir(VideoDirPath)) {
+    //    totalFiles--
+    //    return
+    //  }
+    //  //读取视频文件夹下的视频文件
+    //  const videoFiles = fs.readdirSync(VideoDirPath)
+    //  var videoFilePath = null
+    //  var videoName = null
+    //  if (videoFiles.length === 1) {
+    //    //只有视频
+    //    videoFilePath = path.join(VideoDirPath, videoFiles[0])
+    //    videoName = getNoneExtFileName(videoFiles[0])
+    //  }
+    //  if (videoFiles.length === 2) {
+    //    //若有海报
+    //    const video = isImg(videoFiles[0]) ? videoFiles[1] : videoFiles[0]
+    //    videoFilePath = path.join(VideoDirPath, video)
+    //    videoName = getNoneExtFileName(video)
+    //  }
+    //  if (!videoFilePath) {
+    //    console.log(bundleName + videoDir + '视频文件不存在')
+    //    return
+    //  }
+    //  //读取视频元信息
+    //  ffmpeg.ffprobe(videoFilePath, function (err, metadata) {
+    //    if (err) {
+    //      console.log(videoName + '获取视频元信息失败')
+    //    } else {
+    //      const size = parseInt(metadata.format.size/1000)//转化为kb计算
+    //      videos.push({
+    //        id: parseInt(uploadData.id) + parseInt(videoDir) + '',
+    //        name: videoName,
+    //        duration: formatTime(metadata.format.duration),
+    //        size: size,
+    //        filePath: `/${bundleName}/${videoDir}/${videoName}.ts`,
+    //        poster: `/singlePoster/${bundleName}/${videoDir}_${videoName}.jpg`
+    //      })
+    //      conutFlag++
+    //      if (conutFlag == totalFiles) {
+    //        //排序
+    //        videos.sort(function (a, b) {
+    //          return (a.id - b.id)
+    //        })
+    //        uploadData.videos = videos
+    //        //读取完毕 存入数据库
+    //        const album = new Album(uploadData)
+    //        return album
+    //          .save()
+    //          .then(()=> {
+    //            res.json({
+    //              code: 200,
+    //              msg: '存入成功'
+    //            })
+    //          }).catch(e=> {
+    //            res.json({
+    //              code: 500,
+    //              msg: e
+    //            })
+    //          })
+    //      }
+    //    }
+    //  })
+    //
+    //})
   })
 })
 module.exports = router
