@@ -1,7 +1,7 @@
 node_modules
-test_data
 .idea
 resource/*
 dist
 online_data
 test
+test_data

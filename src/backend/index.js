@@ -64,7 +64,7 @@ function auth(req, res, next) {
     return next()
   }
 }
-app.use(config.prefix, auth)
+//app.use(config.prefix, auth)
 
 //载入路由
 glob.sync('./api/**/*.js', {cwd: __dirname}).forEach(item => {

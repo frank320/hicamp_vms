@@ -28,4 +28,28 @@ router.get('/getAll', (req, res)=> {
       })
     })
 })
+router.get('/getBundleMeta', (req, res)=> {
+  Album
+    .find({})
+    .sort({createdTime: 1})
+    .then(r=> {
+      const bundleMeta = r.map(v=> {
+        return {
+          name: v.name,
+          id: v.id
+        }
+      })
+      res.json({
+        code: 200,
+        data: bundleMeta
+      })
+    })
+    .catch(err=> {
+      res.json({
+        code: 500,
+        data: err
+      })
+    })
+})
+
 module.exports = router
