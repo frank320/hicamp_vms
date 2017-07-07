@@ -74,7 +74,7 @@
                         <!--<App_Data App="VOD" Name="Content_CheckSum"-->
                         <!--Value="a82c271a566c5a6d4ffbea9f2129d57a" />-->
                     </Metadata>
-                    <Content Value="{{fileServer+value.filePath}}"/>
+                    <Content Value="{{fileServer+'TXJY'+id+'/'+value.id.slice(-3)+'.ts'}}"/>
                 </Asset>
             </Asset>
             {{/each}}
