@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<message>
+    <header>
+        <TransactionID>{{TransactionID}}</TransactionID>
+        <Version>{{Version}}</Version>
+        <Timestamp>{{Timestamp}}</Timestamp>
+        <OpCode>{{OpCode}}</OpCode>
+        <MsgType>{{MsgType}}</MsgType>
+    </header>
+    <body>
+        {{ each assetsArray as value index }}
+        <Asset>
+            <AssetCode>{{value.code}}</AssetCode>
+            <PartnerCode>{{PartnerCode}}</PartnerCode>
+        </Asset>
+        {{/each}}
+    </body>
+</message>
