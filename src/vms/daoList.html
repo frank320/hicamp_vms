@@ -219,6 +219,11 @@
         alert('请选择需要导出的媒资')
         return
       }
+      if (checkList.length > 1) {
+        alert('一次只能选取一个资源导出xml文件')
+        return
+      }
+
       $('button.daoXml').prop('disabled', true).text('正在导出...')
       $.ajax({
         type: "POST",
@@ -235,7 +240,7 @@
           if (res.code == 200) {
             $('button.daoXml').prop('disabled', false).text('一键导出Xml')
             //保存xml文件
-            window.open(res.xmlPath, "_self")
+            window.open(res.xmlPath, "_blank")
           } else {
             alert('操作失败')
             $('button.daoXml').prop('disabled', false).text('一键导出Xml')
