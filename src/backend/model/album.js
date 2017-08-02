@@ -5,6 +5,8 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
+const config = require('../config')
+
 const AlbumSchema = new Schema({
   protocaltype: {//操作类型：0 添加，1 更新，2 删除
     type: Number,
@@ -85,4 +87,16 @@ const AlbumSchema = new Schema({
 
 })
 
-module.exports = mongoose.model('Album', AlbumSchema)
+//连接数据库
+mongoose.Promise = global.Promise
+const mongo1 = mongoose.createConnection(config.dbbase)
+mongo1.once('open', (err)=> {
+  if (err) {
+    console.err(err)
+  } else {
+    console.log('mongodb connect successfully')
+  }
+})
+mongo1.on('error', console.error.bind(console, 'connection error:'))
+
+module.exports = mongo1.model('Album', AlbumSchema)
