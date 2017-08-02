@@ -36,18 +36,15 @@ router.get('/getBundleMeta', (req, res)=> {
       const bundleMeta = r.map(v=> {
         return {
           name: v.name,
-          id: v.id
+          id: 'hej0TXJY' + v.id
         }
       })
-      res.json({
-        code: 200,
-        data: bundleMeta
-      })
+      res.json(bundleMeta)
     })
     .catch(err=> {
       res.json({
         code: 500,
-        data: err
+        errmsg: err
       })
     })
 })
