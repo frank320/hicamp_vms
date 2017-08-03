@@ -50,7 +50,7 @@
     float: left;
   }
 
-  .daoExcel, .daoXml {
+  .daoExcel, .daoXml, .daoQdVid {
     float: right;
   }
 
@@ -96,6 +96,7 @@
 
     <button type="button" class="btn btn-primary daoExcel">一键导出Excel</button>
     <button type="button" class="btn btn-primary daoXml">一键导出Xml</button>
+    <button type="button" class="btn btn-primary daoQdVid">一键获取programID</button>
 
   </div>
 </div>
@@ -169,6 +170,7 @@
       })
     }
 
+    //生成 待导入到儿童电视后台数据库的 媒资数据excel表格
     function generateExcel() {
       //获取选中媒资的id
       var checkList = []
@@ -209,6 +211,7 @@
       })
     }
 
+    //导出天津媒资注入的adi.xml文件
     function generateXml() {
       //获取选中媒资的id
       var checkList = []
@@ -254,12 +257,62 @@
       })
     }
 
+    //查询青岛媒资的programID
+    function generateVid() {
+      //获取选中媒资的id
+      var checkList = []
+      $('#list input[type="checkbox"]:checked').each(function () {
+        if ($(this).val()) checkList.push($(this).val())
+      })
+      if (checkList.length === 0) {
+        alert('请选择需要获取programID的媒资')
+        return
+      }
+      if (checkList.length > 1) {
+        alert('一次只能选取一个资源获取programID')
+        return
+      }
+
+      $('button.daoQdVid').prop('disabled', true).text('正在获取...')
+      $.ajax({
+        type: "GET",
+        url: '/vms/getQdVid?vid=' + checkList[0],
+        success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
+          if (res.code == 5188) {
+            alert(res.msg)
+            return
+          }
+          if (res.code == 5189) {
+            alert(res.msg)
+            return
+          }
+          if (res.code == 200) {
+            alert('操作成功,选中资源的programID已经存入到数据库')
+            $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
+          } else {
+            alert('操作失败')
+            $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
+          }
+
+        },
+        fail: function () {
+          alert('操作失败')
+          $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
+        }
+      })
+    }
+
     //绑定事件
     $('.container').on('click', '.daoExcel', generateExcel)
     $('.container').on('click', '.daoXml', generateXml)
+    $('.container').on('click', '.daoQdVid', generateVid)
     $('.container').on('click', '.selectAll', selectAll)
     $('.container').on('click', '.selectOne', selectOne)
-
 
   })
 

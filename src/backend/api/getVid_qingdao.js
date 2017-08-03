@@ -8,6 +8,7 @@ const router = require('express').Router()
 const template = require("art-template")
 const moment = require('moment')
 const fetch = require('node-fetch')
+const { parseString } = require('xml2js')
 
 
 const config = require('../config')
@@ -17,66 +18,122 @@ template.config('extname', '.xml')
 template.config('base', path.join(__dirname, '../template'))
 
 
-router.post('/getVid', (req, res)=> {
-  const id = req.body.id
-  const currentTime = moment(+new Date()).format('YYYY-MM-DD HH:mm:ss')
-  const hisenServer = 'http://10.240.2.13:8080/bddh'//正式系统 http://10.240.3.253:8080/bddh
-  const TransactionID = 'tuxing'////只是在并发请求时，标识会话用的，可以随便一个字符串。返回的信息里会带有请求的这个字符串，标识这是哪条请求的返回
+router.get('/getQdVid', (req, res)=> {
+  const vid = req.query.vid
+  //const hisenServer = 'http://10.240.2.13:8080/bddh'//正式系统 http://10.240.3.253:8080/bddh
+  const hisenServer = 'http://10.240.3.253:8080/bddh'//正式系统 http://10.240.3.253:8080/bddh
+  const TransactionID = 'tx001'//只是在并发请求时，标识会话用的，可以随便一个字符串。返回的信息里会带有请求的这个字符串，标识这是哪条请求的返回
   const OpCode = 'CMS_CODE_QUERY'//查询节目ID的接口，就是CMS_CODE_QUERY这个固定字符串
   const MsgType = 'REQ'//消息类型 REQ：消息请求 RESP：消息响应
-  const PartnerCode = 64//是海信分配的运营商ID 正式平台固定是68
-  const Version = 1.0
-  const assetsArray = [
-    {code: '001', name: '第一集'},
-    {code: '002', name: '第二集'},
-  ]
+  const PartnerCode = 'txcsp'
+  const Version = '1.0'
+  let assetsArray = null
+  return Album
+    .findOne({id: vid})
+    .then(data=> {
+      if (data.videos && data.videos[0].qingdaoVid) {
+        return Promise.reject(5188)
+      }
+      assetsArray = data.videos
+      const postData = {hisenServer, TransactionID, OpCode, MsgType, PartnerCode, Version, assetsArray}
+      Object.assign(postData, {
+        Timestamp: moment(+new Date()).format('YYYY-MM-DD HH:mm:ss')
+      })
+      const postXml = template('qingdao_template', postData)
+      return fetch(hisenServer, {
+        method: 'POST',
+        body: postXml,
+        headers: {'Content-Type': 'text/xml'}
+      })
+      //for test
+      //return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      //            <message>
+      //                <header>
+      //                    <TransactionID>tx001</TransactionID>
+      //                    <Version>1.0</Version>
+      //                    <Timestamp>2017-08-03 03:32:29</Timestamp>
+      //                    <OpCode>CMS_CODE_QUERY</OpCode>
+      //                    <MsgType>RESP</MsgType>
+      //                    <ReturnCode>0</ReturnCode>
+      //                </header>
+      //                <body>
+      //                    <Asset>
+      //                        <AssetCode>2018080102</AssetCode>
+      //                        <PartnerCode>txcsp</PartnerCode>
+      //                        <ProgramId>1000000016076</ProgramId>
+      //                    </Asset>
+      //                    <Asset>
+      //                        <AssetCode>2017080101</AssetCode>
+      //                        <PartnerCode>txcsp</PartnerCode>
+      //                        <ProgramId>1000000016074</ProgramId>
+      //                    </Asset>
+      //                </body>
+      //            </message>`
 
-  const postData = {hisenServer, TransactionID, OpCode, MsgType, PartnerCode, Version, assetsArray}
+    })
+    .then(resXml=> {
+      //parse response xml
+      return new Promise((resolve, reject)=> {
+        return parseString(resXml, (err, result)=> {
+          if (err) {
+            return reject(err)
+          } else {
+            return resolve(result)
+          }
+        })
+      })
+    })
+    .then(data=> {
+      //get ProgramId data
+      return new Promise((resolve, reject)=> {
+        if (data && data.message.header[0].ReturnCode[0] == 0) {
+          //get programID success
+          resolve(data.message.body[0].Asset)
+        } else {
+          reject(data.message.header[0].ReturnCode[0], ' 获取programid出错')
+        }
+      })
+    })
+    .then(data=> {
+      if (data.length !== assetsArray.length) {
+        return Promise.reject(5189)
+      }
+      //update videos in mongodb
+      for (let {AssetCode,ProgramId} of data) {
+        for (let video of assetsArray) {
+          if (`hej0TXJY${video.id}` === AssetCode[0]) {
+            Object.assign(video, {
+              qingdaoVid: ProgramId[0]
+            })
+            break
+          }
+        }
+      }
+      Album.update({id: vid}, {$set: {videos: assetsArray}}).exec()
+      return res.json({
+        code: 200,
+        msg: '操作成功'
+      })
+    })
+    .catch(err=> {
+      if (err == 5188) {
+        return res.json({
+          code: 5188,
+          msg: '所选资源的programID已经存在,请选择其他资源'
+        })
+      }
+      if (err == 5189) {
+        return res.json({
+          code: 5189,
+          msg: '获取的programID个数和数据库视频个数不相等'
+        })
+      }
+      return res.json({
+        code: 500,
+        msg: err
+      })
+    })
 
-  const postXml = template('qindao_template', postData)
-  Object.assign(postData, {
-    Timestamp: moment(+new Date()).format('YYYY-MM-DD HH:mm:ss')
-  })
-  console.log(postXml)
-  fetch(hisenServer, {
-    method: 'POST',
-    body: postXml,
-    headers: {'Content-Type': 'text/xml'}
-  }).then(r=>
-    r.json()
-  ).then(()=> {
-    res.end('ok')
-  })
-
-
-//return Album
-//  .findOne({id: id})
-//  .then(data=> {
-//    data.currentTime = currentTime
-//    data.fileServer = fileServer
-//    const xml = template('xml_template', data)
-//    const xmlName = `${data.name}.xml`
-//    try {
-//      fs.writeFileSync(path.join(config.resourcePath, 'adi_xml', xmlName), xml)
-//    } catch (e) {
-//      res.json({
-//        code: 500,
-//        msg: '文件保存出错'
-//      })
-//    }
-//    const xmlPath = config.prefix + config.staicRoute + '/adi_xml/' + xmlName
-//
-//    res.json({
-//      code: 200,
-//      xmlPath: xmlPath
-//    })
-//  })
-//  .catch(err=> {
-//    res.json({
-//      code: 500,
-//      msg: err
-//    })
-//  })
 
 })
 

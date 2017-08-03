@@ -10,7 +10,7 @@
     <body>
         {{ each assetsArray as value index }}
         <Asset>
-            <AssetCode>{{value.code}}</AssetCode>
+            <AssetCode>{{'hej0TXJY'+value.id}}</AssetCode>
             <PartnerCode>{{PartnerCode}}</PartnerCode>
         </Asset>
         {{/each}}
