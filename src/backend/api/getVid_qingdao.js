@@ -45,6 +45,7 @@ router.get('/getQdVid', (req, res)=> {
         body: postXml,
         headers: {'Content-Type': 'application/xml'}
       })
+        .then(r=>r.text())
       //for test
       //return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
       //            <message>
@@ -90,7 +91,7 @@ router.get('/getQdVid', (req, res)=> {
           //get programID success
           resolve(data.message.body[0].Asset)
         } else {
-          reject(data.message.header[0].ReturnCode[0], ' 获取programid出错')
+          reject('programid查询returncode值为:' + data.message.header[0].ReturnCode[0])
         }
       })
     })

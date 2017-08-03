@@ -283,12 +283,9 @@
             window.location.replace('./index.html')
             return
           }
-          if (res.code == 5188) {
+          if (res.code == 5188 || 5189) {
             alert(res.msg)
-            return
-          }
-          if (res.code == 5189) {
-            alert(res.msg)
+            $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
             return
           }
           if (res.code == 200) {
