@@ -43,7 +43,7 @@ router.get('/getQdVid', (req, res)=> {
       return fetch(hisenServer, {
         method: 'POST',
         body: postXml,
-        headers: {'Content-Type': 'text/xml'}
+        headers: {'Content-Type': 'application/xml'}
       })
       //for test
       //return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
