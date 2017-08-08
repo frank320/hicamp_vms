@@ -12,7 +12,6 @@
 var gulp = require('gulp')
 var gulpLoadPlugins = require('gulp-load-plugins')
 var plugins = gulpLoadPlugins()
-var runSequence = require('run-sequence')
 var del = require('del')
 
 gulp.task('clean', del.bind(null, ['dist']))
@@ -22,7 +21,7 @@ gulp.task('compile', ['clean'], function () {
     .pipe(plugins.babel())
     .pipe(gulp.dest('dist/backend'))
 })
-//移动其文件
+//移动其它文件
 gulp.task('extrals', ['compile'], function () {
   gulp.src('src/backend/excelTemplate/*.xlsx').pipe(gulp.dest('dist/backend/excelTemplate'))
   gulp.src('src/vms/**/*.*').pipe(gulp.dest('dist/vms'))

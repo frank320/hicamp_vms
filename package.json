@@ -8,7 +8,7 @@
     "dev": "node-dev index.js",
     "clean": "gulp clean",
     "build": "gulp build",
-    "dist": "pm2 start app.json"
+    "deploy": "gulp build && pm2 start app.json"
   },
   "keywords": [
     "nodejs",
