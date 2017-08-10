@@ -81,6 +81,7 @@
         <th>序号</th>
         <th>海报</th>
         <th>名称</th>
+        <th>CP商</th>
         <th>资源ID</th>
         <th>类型</th>
         <th>创建时间</th>
@@ -113,6 +114,7 @@
       <img src={{'/vms/static'+value.posterSmall}} alt='嗨学营'>
     </td>
     <td>{{value.name}}</td>
+    <td>{{value.copyright}}</td>
     <td>{{value.id}}</td>
     <td>{{value.isAlbum?'剧集':'单片'}}</td>
     <td>{{value.createdTime | $moment}}</td>
