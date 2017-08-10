@@ -15,7 +15,7 @@ router.get('/getList', (req, res)=> {
   Album.count().then(r=> {
       totalPage = Math.ceil(r / limit)
       return Album.find({})
-        .sort({createdTime: -1})
+        .sort({createdTime: 1})
         .skip(start)
         .limit(limit)
     })

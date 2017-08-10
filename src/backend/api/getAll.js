@@ -14,7 +14,7 @@ const Album = require('../model/album')
 router.get('/getAll', (req, res)=> {
   Album
     .find({})
-    .sort({createdTime: -1})
+    .sort({createdTime: 1})
     .then(r=> {
       res.json({
         code: 200,
