@@ -50,7 +50,7 @@
     float: left;
   }
 
-  .daoExcel, .daoXml, .daoQdVid {
+  .daoExcel, .daoXml, .daoQdVid, .daoGzExcel {
     float: right;
   }
 
@@ -95,9 +95,10 @@
   <div class="wrap">
     <div class="checkbox selectAll"><label><input id='selectAll' type="checkbox" value="全选"><b>全选</b></label></div>
 
-    <button type="button" class="btn btn-primary daoExcel">一键导出Excel</button>
-    <button type="button" class="btn btn-primary daoXml">一键导出Xml</button>
-    <button type="button" class="btn btn-primary daoQdVid">一键获取programID</button>
+    <button type="button" class="btn btn-primary daoExcel">一键导出天津Excel</button>
+    <button type="button" class="btn btn-primary daoXml">一键导出天津Xml</button>
+    <button type="button" class="btn btn-primary daoQdVid">一键获取青岛programID</button>
+    <button type="button" class="btn btn-primary daoGzExcel">一键导出贵州Excel</button>
 
   </div>
 </div>
@@ -142,6 +143,7 @@
     }
     //渲染列表
     renderList()
+
     function renderList() {
       $.get('/vms/getAll', function (res) {
         if (res.code == 401) {
@@ -306,8 +308,50 @@
       })
     }
 
+    //生成 待导入到儿童电视后台数据库的 媒资数据excel表格(贵州)
+    function generateGuizhouExcel() {
+      //获取选中媒资的id
+      var checkList = []
+      $('#list input[type="checkbox"]:checked').each(function () {
+        if ($(this).val()) checkList.push($(this).val())
+      })
+      if (checkList.length === 0) {
+        alert('请选择需要导出的媒资')
+        return
+      }
+      $('button.daoGzExcel').prop('disabled', true).text('正在导出...')
+      $.ajax({
+        type: "POST",
+        url: '/vms/generateGuizhouExcel',
+        data: {
+          checkList: JSON.stringify(checkList)
+        },
+        success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
+          if (res.code == 200) {
+            $('button.daoGzExcel').prop('disabled', false).text('一键导出Excel')
+            //保存表格
+            window.open(res.excelPath, "_self")
+          } else {
+            alert('操作失败')
+            $('button.daoGzExcel').prop('disabled', false).text('一键导出Excel')
+          }
+
+        },
+        fail: function () {
+          alert('操作失败')
+          $('button.daoGzExcel').prop('disabled', false).text('一键导出Excel')
+        }
+      })
+    }
+
     //绑定事件
     $('.container').on('click', '.daoExcel', generateExcel)
+    $('.container').on('click', '.daoGzExcel', generateGuizhouExcel)
     $('.container').on('click', '.daoXml', generateXml)
     $('.container').on('click', '.daoQdVid', generateVid)
     $('.container').on('click', '.selectAll', selectAll)
