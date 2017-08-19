@@ -333,18 +333,18 @@
             return
           }
           if (res.code == 200) {
-            $('button.daoGzExcel').prop('disabled', false).text('一键导出Excel')
+            $('button.daoGzExcel').prop('disabled', false).text('一键导出贵州Excel')
             //保存表格
             window.open(res.excelPath, "_self")
           } else {
             alert('操作失败')
-            $('button.daoGzExcel').prop('disabled', false).text('一键导出Excel')
+            $('button.daoGzExcel').prop('disabled', false).text('一键导出贵州Excel')
           }
 
         },
         fail: function () {
           alert('操作失败')
-          $('button.daoGzExcel').prop('disabled', false).text('一键导出Excel')
+          $('button.daoGzExcel').prop('disabled', false).text('一键导出贵州Excel')
         }
       })
     }

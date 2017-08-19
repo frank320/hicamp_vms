@@ -16,39 +16,6 @@ router.post('/generateGuizhouExcel', (req, res) => {
       id: {$in: checkList}
     })
     .then(data => {
-      data = [
-        {
-          name: '奇妙的我',
-          videos: [
-            {
-              id: 1
-            },
-            {
-              id: 2
-            },
-            {
-              id: 3
-            }
-          ]
-        },
-        {
-          name: '我上幼儿园啦',
-          videos: [
-            {
-              id: 1
-            },
-            {
-              id: 2
-            },
-            {
-              id: 3
-            },
-            {
-              id: 4
-            }
-          ]
-        }
-      ]
       //读取贵州的媒资ID元数据
       const gzJson = JSON.parse(fs.readFileSync(path.join(config.resourcePath, 'guizhouAssetsId', 'guizhouAssetsId_20170820.json')))
       //关联贵州媒资ID
