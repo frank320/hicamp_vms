@@ -199,18 +199,18 @@
             return
           }
           if (res.code == 200) {
-            $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
+            $('button.daoExcel').prop('disabled', false).text('一键导出天津Excel')
             //保存表格
             window.open(res.excelPath, "_self")
           } else {
             alert('操作失败')
-            $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
+            $('button.daoExcel').prop('disabled', false).text('一键导出天津Excel')
           }
 
         },
         fail: function () {
           alert('操作失败')
-          $('button.daoExcel').prop('disabled', false).text('一键导出Excel')
+          $('button.daoExcel').prop('disabled', false).text('一键导出天津Excel')
         }
       })
     }
