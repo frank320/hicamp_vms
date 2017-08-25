@@ -97,7 +97,7 @@
 
     <button type="button" class="btn btn-primary daoExcel">一键导出天津Excel</button>
     <button type="button" class="btn btn-primary daoXml">一键导出天津Xml</button>
-    <button type="button" class="btn btn-primary daoQdVid">一键获取青岛programID</button>
+    <button type="button" class="btn btn-primary daoQdVid">一键获取JSON</button>
     <button type="button" class="btn btn-primary daoGzExcel">一键导出贵州Excel</button>
 
   </div>
@@ -269,41 +269,33 @@
         if ($(this).val()) checkList.push($(this).val())
       })
       if (checkList.length === 0) {
-        alert('请选择需要获取programID的媒资')
-        return
-      }
-      if (checkList.length > 1) {
-        alert('一次只能选取一个资源获取programID')
+        alert('请选择需要获取JOSN的媒资')
         return
       }
 
       $('button.daoQdVid').prop('disabled', true).text('正在获取...')
       $.ajax({
         type: "GET",
-        url: '/vms/getQdVid?vid=' + checkList[0],
+        url: '/vms/getJson?checkList=' + checkList.join(','),
         success: function (res) {
           if (res.code == 401) {
             alert('获取数据失败,请重新登录')
             window.location.replace('./index.html')
             return
           }
-          if (res.code == 5188 || 5189) {
-            alert(res.msg)
-            $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
-            return
-          }
           if (res.code == 200) {
-            alert('操作成功,选中资源的programID已经存入到数据库')
-            $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
+            $('button.daoQdVid').prop('disabled', false).text('一键获取JSON')
+            //保存json文件
+            window.open(res.jsonPath, "_blank")
           } else {
             alert('操作失败')
-            $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
+            $('button.daoQdVid').prop('disabled', false).text('一键获取JSON')
           }
 
         },
         fail: function () {
           alert('操作失败')
-          $('button.daoQdVid').prop('disabled', false).text('一键获取programID')
+          $('button.daoQdVid').prop('disabled', false).text('一键获取JSON')
         }
       })
     }
