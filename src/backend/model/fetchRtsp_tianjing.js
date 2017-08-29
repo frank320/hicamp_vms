@@ -10,18 +10,20 @@ const fetch = require('node-fetch')
 //   areaCode: '113',
 //   userId: '8120010526723934',
 //   userSign: '8120010526723934',
+//   productId: 'product01',
+//   tryFlag: '0',
+//   startTime: '0',
+//   resourceName: '我上幼儿园啦',
+//   subId: '-999999',
+
+
 //
 //   //不变
-//   productId: 'product01',
 //   sessionId: '363472005',
 //   sessionSign: '08c4608555910ebefe8ca4b85d8fcb28',
 //   urlEndTime: '20170824T130139Z',
-//   startTime: '0',
 //   endTime: '162',
-//   tryFlag: '0',
-//   subId: '-999999',
 //   resourceId: '102423131',
-//   resourceName: '我上幼儿园啦',
 //   columnId: ''
 // }
 
@@ -57,16 +59,16 @@ function fetchRtspUrl(video) {
         const rtspUrl = json.rtspUrl
         const query = url.parse(rtspUrl, true).query
         video.videoUrl = `${rtspUrl.split('?')[0]}?${params({
-          productId: query.productId,
+          // productId: query.productId,
           sessionId: query.sessionId,
           sessionSign: query.sessionSign,
           urlEndTime: query.urlEndTime,
-          startTime: query.startTime,
+          // startTime: query.startTime,
           endTime: query.endTime,
-          tryFlag: query.tryFlag,
-          subId: query.subId,
+          // tryFlag: query.tryFlag,
+          // subId: query.subId,
           resourceId: query.resourceId,
-          resourceName: query.resourceName
+          // resourceName: query.resourceName
         })}`
       } else {
         console.log(`${video.name} 获取rtsp播放串失败`)
