@@ -50,7 +50,7 @@
     float: left;
   }
 
-  .daoExcel, .daoXml, .daoQdVid, .daoGzExcel {
+  .daoExcel, .daoXml, .daoQdVid, .daoGzExcel, .daoMeta {
     float: right;
   }
 
@@ -99,6 +99,7 @@
     <button type="button" class="btn btn-primary daoXml">一键导出天津Xml</button>
     <button type="button" class="btn btn-primary daoQdVid">一键获取JSON</button>
     <button type="button" class="btn btn-primary daoGzExcel">一键导出贵州Excel</button>
+    <button type="button" class="btn btn-primary daoMeta">一键导出媒资元数据</button>
 
   </div>
 </div>
@@ -341,11 +342,53 @@
       })
     }
 
+    //生成 资源元数据表格
+    function generateMetaExcel() {
+      //获取选中媒资的id
+      var checkList = []
+      $('#list input[type="checkbox"]:checked').each(function () {
+        if ($(this).val()) checkList.push($(this).val())
+      })
+      if (checkList.length === 0) {
+        alert('请选择需要导出的媒资')
+        return
+      }
+      $('button.daoMeta').prop('disabled', true).text('正在导出...')
+      $.ajax({
+        type: "POST",
+        url: '/vms/generateMetaExcel',
+        data: {
+          checkList: JSON.stringify(checkList)
+        },
+        success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
+          if (res.code == 200) {
+            $('button.daoMeta').prop('disabled', false).text('一键导出媒资元数据')
+            //保存表格
+            window.open(res.excelPath, "_self")
+          } else {
+            alert('操作失败')
+            $('button.daoMeta').prop('disabled', false).text('一键导出媒资元数据')
+          }
+
+        },
+        fail: function () {
+          alert('操作失败')
+          $('button.daoMeta').prop('disabled', false).text('一键导出媒资元数据')
+        }
+      })
+    }
+
     //绑定事件
     $('.container').on('click', '.daoExcel', generateExcel)
     $('.container').on('click', '.daoGzExcel', generateGuizhouExcel)
     $('.container').on('click', '.daoXml', generateXml)
     $('.container').on('click', '.daoQdVid', generateVid)
+    $('.container').on('click', '.daoMeta', generateMetaExcel)
     $('.container').on('click', '.selectAll', selectAll)
     $('.container').on('click', '.selectOne', selectOne)
 
