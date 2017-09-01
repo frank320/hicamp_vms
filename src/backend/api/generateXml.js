@@ -18,7 +18,7 @@ template.config('base', path.join(__dirname, '../template'))
 router.post('/generateXml', (req, res)=> {
   const id = req.body.id
   const currentTime = moment(+new Date()).format('YYYY-MM-DD HH:mm:ss')
-  const fileServer = 'ftp://test:test@101.200.84.44:21/'
+  const fileServer = 'http://101.200.84.44:80/bo/download/TJ/'
   return Album
     .findOne({id: id})
     .then(data=> {
