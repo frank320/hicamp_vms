@@ -17,6 +17,8 @@ router.post('/generateMetaExcel', (req, res) => {
     })
     .then(data => {
         //标清剧集
+       //木灵宝贝之重回帆智谷 木奇灵之绿影战灵 进击的机甲-圣戒飞陀 洛克王国大冒险1 洛克王国大冒险2-恩佐日记
+       // 童子传奇 童子传奇之大闹招财岛 童子传奇之招财岛总动员 蓝猫典典环游记 咪咪找妈妈 太阳城的故事 星史传说
         const filterData = [
           '1499078259000',
           '1499078340000',
@@ -32,18 +34,16 @@ router.post('/generateMetaExcel', (req, res) => {
           '1498037715000'
         ]
         //处理data
-        let dataArr = []
         for (let bundle of data) {
           if (filterData.includes(bundle.id)) {
             for (let video of bundle.videos) {
               video.isSD = 1
             }
           }
-          dataArr.push(...bundle.videos)
         }
         //获得Excel模板的buffer对象
         try {
-          var exlBuf = fs.readFileSync(path.join(__dirname, '../template/meta_template.xlsx'))
+          var exlBuf = fs.readFileSync(path.join(__dirname, '../template/metaExcelTJ_template.xlsx'))
         } catch (e) {
           return res.json({
             code: 500,
@@ -52,7 +52,7 @@ router.post('/generateMetaExcel', (req, res) => {
         }
 
         //用数据源(对象)data渲染Excel模板
-        return ejsExcel.renderExcelCb(exlBuf, dataArr, function (err, exlBuf2) {
+        return ejsExcel.renderExcelCb(exlBuf, data, function (err, exlBuf2) {
           if (err) {
             return res.json({
               code: 500,
