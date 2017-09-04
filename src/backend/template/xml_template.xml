@@ -67,7 +67,7 @@
                         <!--可选字段-->
                         <App_Data App="VOD" Name="Type" Value="movie"/>
                         <!--<App_Data App="VOD" Name="Encode_Format" Value="MPEG2_IBP" />-->
-                        <App_Data App="VOD" Name="VideoType" Value="HD"/>
+                        <App_Data App="VOD" Name="VideoType" Value="{{isSD?'SD':'HD'}}"/>
                         <App_Data App="VOD" Name="Run_Time" Value="{{value.duration}}"/>
                         <!--<App_Data App="VOD" Name="Up_Success" Value="0" />-->
                         <App_Data App="VOD" Name="Content_FileSize" Value="{{value.size*1000}}"/>
