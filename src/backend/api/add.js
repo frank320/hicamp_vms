@@ -211,7 +211,7 @@ router.post('/add', function (req, res) {
                 console.log(videoName + '获取视频元信息失败')
                 return resolve('fail')
               } else {
-                const size = parseInt(metadata.format.size / 1000)//转化为kb计算
+                const size = parseInt(metadata.format.size / 1024)//转化为kb计算
                 videos.push({
                   id: parseInt(uploadData.id) + parseInt(videoDir) + '',
                   name: videoName,
