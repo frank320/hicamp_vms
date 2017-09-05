@@ -54,6 +54,23 @@
     float: right;
   }
 
+  .detail {
+    color: #337AB7;
+    /*text-decoration: underline;*/
+    cursor: pointer;
+  }
+
+  #myModal {
+    /*width: 800px;*/
+  }
+
+  .general {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 15px;
+    font-weight: 700;
+  }
+
 </style>
 
 <body>
@@ -102,6 +119,25 @@
     <button type="button" class="btn btn-primary daoMeta">一键导出媒资元数据</button>
 
   </div>
+  <!--详情页弹窗-->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">资源列表详情</h4>
+        </div>
+        <div class="modal-body">
+          加载中...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 </body>
@@ -115,7 +151,7 @@
       <img src={{'/vms/static'+value.posterLarge}} alt='嗨学营'>
       <img src={{'/vms/static'+value.posterSmall}} alt='嗨学营'>
     </td>
-    <td>{{value.name}}</td>
+    <td class='detail' bundleId={{value.id}}>{{value.name}}</td>
     <td>{{value.copyright}}</td>
     <td>{{value.id}}</td>
     <td>{{value.isAlbum?'剧集':'单片'}}</td>
@@ -123,7 +159,34 @@
   </tr>
   {{/each}}
 </script>
-
+<!--剧集列表详情弹窗-->
+<script id='content-modal' type='text/html'>
+  <div class='general'>
+    <span>剧集名称: {{name}}</span><span>总集数: {{videos.length}}</span><span>总时长: {{totalDuration}}</span><span>总大小: {{(totalSize/1024/1024).toFixed(2)+'G'}}</span>
+  </div>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>序号</th>
+      <th>名称</th>
+      <th>资源ID</th>
+      <th>时长</th>
+      <th>大小</th>
+    </tr>
+    </thead>
+    <tbody id="detailList">
+    {{each videos value index}}
+    <tr>
+      <td>{{index+1}}</td>
+      <td>{{value.name}}</td>
+      <td>{{value.id}}</td>
+      <td>{{value.duration}}</td>
+      <td>{{(value.size/1024).toFixed(2)+'M'}}</td>
+    </tr>
+    {{/each}}
+    </tbody>
+  </table>
+</script>
 
 <script>
   $(function () {
@@ -383,6 +446,55 @@
       })
     }
 
+//展示详情页
+    //格式化时间
+    function formatTime(second) {
+      second = parseInt(second)
+      return [parseInt(second / 60 / 60), parseInt(second / 60) % 60, second % 60].join(":")
+        .replace(/\b(\d)\b/g, "0$1");
+    }
+
+    function getSeconds(time) {
+      const arr = time.split(':')
+      return arr[0] * 3600 + arr[1] * 60 + arr[2] * 1
+    }
+
+    function showDetail() {
+      var id = $(this).attr('bundleId')
+      $.ajax({
+        url: '/vms/getOne',
+        data: {
+          id: id
+        },
+        success: function (res) {
+          if (res.code == 401) {
+            alert('获取数据失败,请重新登录')
+            window.location.replace('./index.html')
+            return
+          }
+          if (res.code == 200) {
+            var data = res.data
+            var totalDuration = 0
+            var totalSize = 0
+            data.videos.forEach(function (v) {
+              totalDuration += getSeconds(v.duration)
+              totalSize += v.size
+            })
+            data.totalDuration = formatTime(totalDuration)
+            data.totalSize = totalSize
+            var html = template('content-modal', data)
+            $('.modal-body').html(html)
+          } else {
+            console.log('fail')
+          }
+        },
+        fail: function () {
+          console.log('fail')
+        }
+      })
+      $('#myModal').modal('show')
+    }
+
     //绑定事件
     $('.container').on('click', '.daoExcel', generateExcel)
     $('.container').on('click', '.daoGzExcel', generateGuizhouExcel)
@@ -391,7 +503,7 @@
     $('.container').on('click', '.daoMeta', generateMetaExcel)
     $('.container').on('click', '.selectAll', selectAll)
     $('.container').on('click', '.selectOne', selectOne)
-
+    $('.container').on('click', '.detail', showDetail)
   })
 
 </script>

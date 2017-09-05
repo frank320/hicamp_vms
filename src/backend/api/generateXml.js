@@ -14,6 +14,7 @@ const Album = require('../model/album')
 template.config('extname', '.xml')
 template.config('base', path.join(__dirname, '../template'))
 
+//标清视频
 const filterData = [
   '1499078259000',
   '1499078340000',
@@ -40,6 +41,7 @@ router.post('/generateXml', (req, res) => {
       if (filterData.includes(id)) {
         data.isSD = 1
       }
+      data.videos = data.videos.slice(30, 54)
       data.currentTime = currentTime
       data.fileServer = fileServer
       const xml = template('xml_template', data)
