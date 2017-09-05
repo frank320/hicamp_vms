@@ -17,7 +17,7 @@ router.post('/generateGuizhouExcel', (req, res) => {
     })
     .then(data => {
       //读取贵州的媒资ID元数据
-      const gzJson = JSON.parse(fs.readFileSync(path.join(config.resourcePath, 'guizhouAssetsId', 'guizhouAssetsId_20170820.json')))
+      const gzJson = JSON.parse(fs.readFileSync(path.join(config.resourcePath, 'guizhouAssetsId', 'guizhouAssetsId_20170906.json')))
       //关联贵州媒资ID
       for (let bundle of data) {
         for (let item of gzJson.selectableItemList) {
@@ -67,7 +67,7 @@ router.post('/generateGuizhouExcel', (req, res) => {
             msg: err
           })
         }
-        var newExcelName = "daoExcel.xlsx"
+        var newExcelName = "guizhouExcel.xlsx"
         try {
           fs.writeFileSync(config.resourcePath + newExcelName, exlBuf2)
         } catch (e) {
