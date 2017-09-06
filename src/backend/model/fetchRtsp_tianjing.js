@@ -38,8 +38,8 @@ function params(data) {
   }
 }
 
-const getRtspUrl = 'http://43.247.148.246:8090/playurl/getOnDemandUrl.do'
-const productCode = 'product01'
+const getRtspUrl = 'http://43.224.208.201:8090/playurl/getOnDemandUrl.do'
+const productCode = 'txjy01'
 
 function fetchRtspUrl(video) {
   const paramsObj = {
