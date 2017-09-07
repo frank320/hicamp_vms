@@ -24,7 +24,7 @@ router.get('/getAll', (req, res)=> {
     .catch(err=> {
       res.json({
         code: 500,
-        data: err
+        msg: err
       })
     })
 })
@@ -44,7 +44,7 @@ router.get('/getBundleMeta', (req, res)=> {
     .catch(err=> {
       res.json({
         code: 500,
-        errmsg: err
+        msg: err
       })
     })
 })
