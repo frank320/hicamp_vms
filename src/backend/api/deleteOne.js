@@ -27,7 +27,7 @@ router.delete('/deleteOne', (req, res)=> {
     }).catch(err=> {
     res.json({
       code: 500,
-      data: err
+      msg: err
     })
 
   })
