@@ -44,8 +44,7 @@ const productCode = 'txjy01'
 function fetchRtspUrl(video) {
   const paramsObj = {
     areaCode: '113',
-    // assetID: `TXJY${video.vid}002`,
-    assetID: 'TXJY1498031867001002',
+    assetID: `TXJY${video.id}002`,
     providerID: 'TXJY',
     userCode: '8120010526723934',
     tryFlag: 0,//1 试看   0订购使用,
@@ -71,7 +70,7 @@ function fetchRtspUrl(video) {
           resourceName: query.resourceName
         })}`
       } else {
-        console.log(`${video.name} 获取rtsp播放串失败`)
+        console.log(`${video.name} 获取rtsp播放串失败===> ${json ? json.errorMsg : ''}`)
       }
       return Promise.resolve()
     })
@@ -92,6 +91,15 @@ async function fetchRtsp(data) {
     await Promise.all(fetchArr)
     console.log(`剧集 ${bundle.name} 结束==================================================`)
     console.log('')
+  }
+  //filter data
+  for (let [bIndex, bundle] of data.entries()) {
+    for (let video of bundle.videos) {
+      if (!video.videoUrl) {
+        data.splice(bIndex, 1)
+        break
+      }
+    }
   }
   return data
 }
