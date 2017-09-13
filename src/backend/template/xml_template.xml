@@ -20,8 +20,8 @@
                     <App_Data App="VOD" Name="Summary_Short" Value="{{summary}}"/>
                     <App_Data App="VOD" Name="Licensing_Window_Start" Value="2017-06-09"/>
                     <App_Data App="VOD" Name="Licensing_Window_End" Value="2030-06-09"/>
-                    <App_Data App="VOD" Name="Chapter" Value="{{index+1}}"/>
-                    <App_Data App="VOD" Name="PositiveTotal" Value="{{videos.length}}"/>
+                    <App_Data App="VOD" Name="Chapter" Value="{{value.id.slice(-3).replace(/^0*/,'')}}"/>
+                    <App_Data App="VOD" Name="PositiveTotal" Value="{{totalVideos}}"/>
 
 
                     <!--可选字段-->
