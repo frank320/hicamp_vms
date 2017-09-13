@@ -17,8 +17,8 @@ router.post('/generateMetaExcel', (req, res) => {
     })
     .then(data => {
         //标清剧集
-       //木灵宝贝之重回帆智谷 木奇灵之绿影战灵 进击的机甲-圣戒飞陀 洛克王国大冒险1 洛克王国大冒险2-恩佐日记
-       // 童子传奇 童子传奇之大闹招财岛 童子传奇之招财岛总动员 蓝猫典典环游记 咪咪找妈妈 太阳城的故事 星史传说
+        //木灵宝贝之重回帆智谷 木奇灵之绿影战灵 进击的机甲-圣戒飞陀 洛克王国大冒险1 洛克王国大冒险2-恩佐日记
+        // 童子传奇 童子传奇之大闹招财岛 童子传奇之招财岛总动员 蓝猫典典环游记 咪咪找妈妈 太阳城的故事 星史传说
         const filterData = [
           '1499078259000',
           '1499078340000',
@@ -41,6 +41,26 @@ router.post('/generateMetaExcel', (req, res) => {
             }
           }
         }
+
+        // let videos = [...data[0].videos]
+        // data = [
+        //   Object.assign(Object.assign({}, data[0]), {
+        //     videos: videos.slice(0, 30)
+        //   }),
+        //   Object.assign(Object.assign({}, data[0]), {
+        //     videos: videos.slice(30, 54)
+        //   }),
+        //   Object.assign(Object.assign({}, data[0]), {
+        //     videos: videos.slice(54, 78)
+        //   }),
+        //   Object.assign(Object.assign({}, data[0]), {
+        //     videos: videos.slice(78, 102)
+        //   }),
+        //   Object.assign(Object.assign({}, data[0]), {
+        //     videos: videos.slice(102)
+        //   }),
+        // ]
+
         //获得Excel模板的buffer对象
         try {
           var exlBuf = fs.readFileSync(path.join(__dirname, '../template/metaExcelTJ_template.xlsx'))
