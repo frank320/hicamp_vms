@@ -39,7 +39,7 @@ router.get('/getBundleMeta', (req, res)=> {
           id: 'hej0TXJY' + v.id
         }
       })
-      res.json(bundleMeta.slice(96))
+      res.json(bundleMeta.slice(94))
     })
     .catch(err=> {
       res.json({
