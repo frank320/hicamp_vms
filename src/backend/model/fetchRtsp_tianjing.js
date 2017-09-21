@@ -39,7 +39,7 @@ function params(data) {
 }
 
 const getRtspUrl = 'http://43.224.208.201:8090/playurl/getOnDemandUrl.do'
-const productCode = 'txjy01'
+const productCode = '12359'
 
 function fetchRtspUrl(video) {
   const paramsObj = {
@@ -93,15 +93,27 @@ async function fetchRtsp(data) {
     console.log('')
   }
   //filter data
+  const filterData = []
   for (let [bIndex, bundle] of data.entries()) {
     for (let video of bundle.videos) {
       if (!video.videoUrl) {
-        data.splice(bIndex, 1)
+        //bundle to filter
+        filterData.push(bIndex)
         break
       }
     }
   }
-  return data
+  const usefulData = []
+  const dataNames = []
+  for (let [bIndex, bundle] of data.entries()) {
+    if (!filterData.includes(bIndex)) {
+      usefulData.push(bundle)
+      dataNames.push(bundle.name)
+    }
+  }
+  console.log('-------------------------------------------------------')
+  console.log(`可以商用的媒资： ${dataNames}`)
+  return usefulData
 }
 
 module.exports.fetchRtsp = fetchRtsp
