@@ -1,5 +1,6 @@
 /**
  * Created by frank on 2017/5/16.
+ * use: node getBundleTime.js
  */
 const fs = require("fs")
 const path = require('path')
