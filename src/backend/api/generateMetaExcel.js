@@ -33,12 +33,30 @@ router.post('/generateMetaExcel', (req, res) => {
           '1498037662000',
           '1498037715000'
         ]
+        const tenImport = [
+          '1498040237000',
+          '1498040663000',
+          '1498040723000',
+          '1498040777000',
+          '1499078259000',
+          '1499078340000',
+          '1499078402000',
+          '1499078644000',
+          '1498039671000',
+          '1498040023000',
+          '1498040082000',
+          '1498040124000',
+          '1498040169000'
+        ]
         //处理data
         for (let bundle of data) {
           if (filterData.includes(bundle.id)) {
             for (let video of bundle.videos) {
               video.isSD = 1
             }
+          }
+          if (tenImport.includes(bundle.id)) {
+            bundle.videos = bundle.videos.slice(0, 10)
           }
         }
 
