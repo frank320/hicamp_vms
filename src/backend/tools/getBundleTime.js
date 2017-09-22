@@ -53,7 +53,7 @@ Album
         } catch (e) {
           console.log(e.message)
         }
-        console.log('生成表格成功！')
+        console.log(`生成表格 ${newExcelName} 成功!`)
       })
     }
   )
