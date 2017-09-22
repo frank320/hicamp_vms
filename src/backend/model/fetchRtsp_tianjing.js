@@ -112,7 +112,7 @@ async function fetchRtsp(data) {
     }
   }
   console.log('-------------------------------------------------------')
-  console.log(`可以商用的媒资： ${dataNames}`)
+  console.log(`可以商用的媒资： ${dataNames.join('|')}`)
   return usefulData
 }
 
